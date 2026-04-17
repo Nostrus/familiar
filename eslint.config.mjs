@@ -28,4 +28,21 @@ export default tseslint.config(
       'no-console': 'off',
     },
   },
+  {
+    files: [
+      '**/*.config.{js,cjs,mjs,ts,cts}',
+      '**/jest.config.{js,cjs,mjs,ts,cts}',
+      '**/jest.preset.{js,cjs,mjs,ts,cts}',
+    ],
+    languageOptions: {
+      globals: {
+        __dirname: 'readonly',
+        require: 'readonly',
+      },
+    },
+    rules: {
+      '@typescript-eslint/no-require-imports': 'off',
+      'no-undef': 'off',
+    },
+  },
 );

@@ -7,6 +7,7 @@ An Nx monorepo workspace.
 - **Nx** — monorepo tooling for building and running tasks across packages
 - **Prettier** — code formatting
 - **ESLint + @nx/eslint** — linting now, plus Nx lint target inference once projects are added
+- **Nx task scripts** — root `lint` and `test` commands run project targets via Nx
 
 ```sh
 npm run lint
