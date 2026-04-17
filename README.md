@@ -1,12 +1,25 @@
-# New Nx Repository
+# familiar
 
-<a alt="Nx logo" href="https://nx.dev" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="45"></a>
+An Nx monorepo workspace.
 
-✨ Your new, shiny [Nx workspace](https://nx.dev) is ready ✨.
+## Setup
 
-[Learn more about this workspace setup and its capabilities](https://nx.dev/nx-api/js?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or run `npx nx graph` to visually explore what was created. Now, let's get you up to speed!
-## Try the full Nx platform
-🚀 If you haven't connected to Nx Cloud yet, [complete your setup here](https://cloud.nx.app/setup/connect-workspace/guide). Get faster builds with remote caching, distributed task execution, and self-healing CI. [See how your workspace can benefit](#nx-cloud).
+- **Nx** — monorepo tooling for building and running tasks across packages
+- **Prettier** — code formatting
+- **ESLint + @nx/eslint** — linting now, plus Nx lint target inference once projects are added
+
+```sh
+npm run lint
+npm run format
+```
+
+- **Commitlint + Husky** — enforces [Conventional Commits](https://www.conventionalcommits.org/) on every commit (`feat`, `fix`, `chore`, etc.), with optional `web` or `mobile` scope
+
+```sh
+git commit -m "feat: add user authentication"
+git commit -m "fix(web): correct login redirect"
+```
+
 ## Generate a library
 
 ```sh

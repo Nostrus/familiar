@@ -1,4 +1,10 @@
-# Add files here to ignore them from prettier formatting
+.agents
+.cursor
+.github/skills
+.opencode
+.vscode
+dist
+node_modules# Add files here to ignore them from prettier formatting
 /dist
 /coverage
 /.nx/cache
