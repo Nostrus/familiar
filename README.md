@@ -8,6 +8,7 @@ An Nx monorepo workspace.
 - **Prettier** — code formatting
 - **ESLint + @nx/eslint** — linting now, plus Nx lint target inference once projects are added
 - **Nx task scripts** — root `lint` and `test` commands run project targets via Nx
+- **shadcn/ui (web app)** — initialized in `apps/web` using a preset, with base UI files scaffolded
 
 ```sh
 npm run lint
