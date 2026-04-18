@@ -28,18 +28,18 @@ export default function DashboardPage() {
                 <Link href="#">See How It Works</Link>
               </Button>
             </div>
+          </div>
+        </div>
 
-            <div className="flex w-full max-w-2xl flex-wrap items-center justify-center gap-3 pt-2">
-              <div className="rounded-full border border-white/25 bg-white/10 px-4 py-2 text-sm text-white/90 backdrop-blur-sm">
-                50,000+ nights swapped
-              </div>
-              <div className="rounded-full border border-white/25 bg-white/10 px-4 py-2 text-sm text-white/90 backdrop-blur-sm">
-                Verified member profiles
-              </div>
-              <div className="rounded-full border border-white/25 bg-white/10 px-4 py-2 text-sm text-white/90 backdrop-blur-sm">
-                4.9 average host rating
-              </div>
-            </div>
+        <div className="flex w-full flex-wrap items-center justify-center gap-3 pt-6">
+          <div className="rounded-full border border-border px-4 py-2 text-sm text-muted-foreground">
+            50,000+ nights swapped
+          </div>
+          <div className="rounded-full border border-border px-4 py-2 text-sm text-muted-foreground">
+            Verified member profiles
+          </div>
+          <div className="rounded-full border border-border px-4 py-2 text-sm text-muted-foreground">
+            4.9 average host rating
           </div>
         </div>
       </section>

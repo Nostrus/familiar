@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Home icon favicon">
+  <path
+    d="M12 30 32 14l20 16v22H38V39a6 6 0 0 0-12 0v13H12V30z"
+    fill="none"
+    stroke="oklch(0.527 0.154 150.069)"
+    stroke-width="5"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+</svg>
