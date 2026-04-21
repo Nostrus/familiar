@@ -1,50 +1,31 @@
-# familiar
+# Familiar — Home Swapping, Reimagined
 
-An Nx monorepo workspace.
+A home-swapping platform where members swap homes with trusted connections worldwide, skip hotel prices, and stay like locals.
 
-## Setup
+## Tech Stack
 
-- **Nx** — monorepo tooling for building and running tasks across packages
-- **Prettier** — code formatting
-- **ESLint + @nx/eslint** — linting now, plus Nx lint target inference once projects are added
-- **Nx task scripts** — root `lint` and `test` commands run project targets via Nx
-- **shadcn/ui (web app)** — initialized in `apps/web` using a preset, with base UI files scaffolded
+- **Nx** — monorepo tooling
+- **Next.js 16** (`@org/web`) — web app with App Router
+- **Playwright** (`@org/web-e2e`) — e2e tests
+- **Tailwind v4** — CSS-first styling
+- **shadcn/ui** — component library
+- **Prettier**, **ESLint** — formatting and linting
+- **Commitlint + Husky** — [Conventional Commits](https://www.conventionalcommits.org/)
 
-```sh
-npm run lint
-npm run format
-```
-
-- **Commitlint + Husky** — enforces [Conventional Commits](https://www.conventionalcommits.org/) on every commit (`feat`, `fix`, `chore`, etc.), with optional `web` or `mobile` scope
+## Commands
 
 ```sh
-git commit -m "feat: add user authentication"
-git commit -m "fix(web): correct login redirect"
+npm run dev          # Start dev server
+npm run build        # Build for production
+npm run lint         # Lint all projects
+npm run format       # Format with Prettier
+npm run e2e          # Run e2e tests
 ```
 
-## Generate a library
+## Project Structure
 
-```sh
-npx nx g @nx/js:lib packages/pkg1 --publishable --importPath=@my-org/pkg1
-```
-
-## Run tasks
-
-To build the library use:
-
-```sh
-npx nx build pkg1
-```
-
-To run any task with Nx use:
-
-```sh
-npx nx <target> <project-name>
-```
-
-These targets are either [inferred automatically](https://nx.dev/concepts/inferred-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or defined in the `project.json` or `package.json` files.
-
-[More about running tasks in the docs &raquo;](https://nx.dev/features/run-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+- `apps/web` — Next.js marketing site and dashboard
+- `apps/web-e2e` — Playwright e2e tests
 
 ## Versioning and releasing
 
@@ -96,25 +77,3 @@ npx nx g ci-workflow
 ```
 
 [Learn more about Nx on CI](https://nx.dev/ci/intro/ci-with-nx#ready-get-started-with-your-provider?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Install Nx Console
-
-Nx Console is an editor extension that enriches your developer experience. It lets you run tasks, generate code, and improves code autocompletion in your IDE. It is available for VSCode and IntelliJ.
-
-[Install Nx Console &raquo;](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Useful links
-
-Learn more:
-
-- [Learn more about this workspace setup](https://nx.dev/nx-api/js?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Learn about Nx on CI](https://nx.dev/ci/intro/ci-with-nx?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Releasing Packages with Nx release](https://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [What are Nx plugins?](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-And join the Nx community:
-
-- [Discord](https://go.nx.dev/community)
-- [Follow us on X](https://twitter.com/nxdevtools) or [LinkedIn](https://www.linkedin.com/company/nrwl)
-- [Our Youtube channel](https://www.youtube.com/@nxdevtools)
-- [Our blog](https://nx.dev/blog?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
