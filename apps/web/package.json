@@ -2,10 +2,21 @@
   "name": "@org/web",
   "version": "0.0.1",
   "private": true,
+  "scripts": {
+    "db:generate": "drizzle-kit generate --config drizzle.config.mjs",
+    "db:migrate": "drizzle-kit migrate --config drizzle.config.mjs",
+    "db:push": "drizzle-kit push --config drizzle.config.mjs",
+    "db:pull": "drizzle-kit pull --config drizzle.config.mjs",
+    "db:seed": "tsx src/db/seed.ts",
+    "db:studio": "drizzle-kit studio --config drizzle.config.mjs"
+  },
   "dependencies": {
     "@clerk/nextjs": "^7.2.3",
+    "@neondatabase/serverless": "^1.1.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "dotenv": "^16.4.7",
+    "drizzle-orm": "^0.45.2",
     "lucide-react": "^1.8.0",
     "next": "~16.1.6",
     "radix-ui": "^1.4.3",
@@ -18,7 +29,10 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4.2.2",
     "autoprefixer": "^10.4.13",
+    "drizzle-kit": "^0.31.10",
+    "drizzle-seed": "^0.3.1",
     "postcss": "^8.4.38",
-    "tailwindcss": "^4.2.2"
+    "tailwindcss": "^4.2.2",
+    "tsx": "^4.21.0"
   }
 }
