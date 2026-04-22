@@ -15,12 +15,54 @@ A home-swapping platform where members swap homes with trusted connections world
 ## Commands
 
 ```sh
-npm run dev          # Start dev server
-npm run build        # Build for production
+npm exec nx run @org/web:dev      # Start Next.js app
+npm exec nx run @org/web:build    # Build web app
+npm run test                        # Run all tests
 npm run lint         # Lint all projects
 npm run format       # Format with Prettier
-npm run e2e          # Run e2e tests
+npm exec nx run @org/web-e2e:e2e   # Run e2e tests
 ```
+
+## Database (Drizzle + Neon)
+
+The web app uses Drizzle ORM with Neon PostgreSQL.
+
+Location:
+
+- `apps/web/src/db/schema.ts` - table definitions (`cities`, `clerk_users`)
+- `apps/web/src/db/queries` - DB queries
+- `apps/web/src/db/seed.ts` - seed data for DB
+
+Run DB commands from `apps/web`:
+
+```sh
+cd apps/web
+npm run db:generate  # Generate migration files from schema
+npm run db:migrate   # Apply migrations
+npm run db:seed      # Seed popular destination cities
+npm run db:studio    # Open Drizzle Studio
+```
+
+Required environment variables in `apps/web/.env`:
+
+```env
+DATABASE_URL=your_neon_connection_string
+CLERK_WEBHOOK_SIGNING_SECRET=your_clerk_webhook_signing_secret
+```
+
+## Clerk Webhook Sync
+
+Clerk user lifecycle events are synced to the database at:
+
+- `apps/web/src/app/api/webhooks/clerk/route.ts`
+
+Supported events:
+
+- `user.created` - upsert into `clerk_users`
+- `user.updated` - update `clerk_users.updated_at`
+- `user.deleted` - delete from `clerk_users`
+
+Configure this endpoint in Clerk Webhooks and use the same signing secret in all runtime environments.
 
 ## Project Structure
 
