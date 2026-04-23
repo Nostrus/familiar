@@ -1,4 +1,4 @@
-import { integer, pgTable, serial, text, timestamp } from 'drizzle-orm/pg-core';
+import { date, integer, pgTable, serial, text, timestamp } from 'drizzle-orm/pg-core';
 
 export const clerkUsers = pgTable('clerk_users', {
   clerkUserId: text('clerk_user_id').primaryKey(),
@@ -35,3 +35,16 @@ export const homes = pgTable('homes', {
 export type City = typeof cities.$inferSelect;
 export type Home = typeof homes.$inferSelect;
 export type User = typeof clerkUsers.$inferSelect;
+
+export const homeAvailability = pgTable('home_availability', {
+  id: serial('id').primaryKey(),
+  homeId: integer('home_id')
+    .notNull()
+    .references(() => homes.id, { onDelete: 'cascade' }),
+  startDate: date('start_date').notNull(),
+  endDate: date('end_date').notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+});
+
+export type HomeAvailability = typeof homeAvailability.$inferSelect;
