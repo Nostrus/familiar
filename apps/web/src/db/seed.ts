@@ -50,6 +50,29 @@ type HomeTemplate = {
   amenities: string[];
 };
 
+const homeAdjectives = ['Spacious', 'Sunny', 'Peaceful', 'Modern', 'Charming', 'Stylish'];
+const homeStyles = ['cozy', 'elegant', 'bright', 'urban', 'tranquil', 'contemporary'];
+const homeAreas = [
+  'midtown',
+  'riverside',
+  'old town',
+  'city-center',
+  'arts district',
+  'historic quarter',
+];
+
+function pickRandom<T>(items: T[]) {
+  return items[Math.floor(Math.random() * items.length)];
+}
+
+function generateHomeDescription(city: string) {
+  const adjective = pickRandom(homeAdjectives);
+  const style = pickRandom(homeStyles);
+  const area = pickRandom(homeAreas);
+  const noun = Math.random() > 0.5 ? 'home' : 'apartment';
+  return `${adjective} and ${style} ${area} ${city} ${noun}`;
+}
+
 const homeTemplates: HomeTemplate[] = [
   { bedrooms: 1, bathrooms: 1, maxGuests: 2, amenities: ['wifi', 'ac', 'washing_machine'] },
   {
@@ -110,7 +133,11 @@ async function main() {
   // Seed homes if not present
   const existingHomes = await db.select({ id: homes.id }).from(homes).limit(1);
   if (existingHomes.length > 0) {
-    console.info('Homes already exist. Seed skipped.');
+    await db
+      .update(homes)
+      .set({ description: sql`concat('Charming and cozy ', city, ' home')` })
+      .where(eq(homes.description, ''));
+    console.info('Homes already exist. Backfilled missing descriptions.');
     return;
   }
 
@@ -122,6 +149,7 @@ async function main() {
       cityId: city.id,
       city: city.cityName,
       country: city.country,
+      description: generateHomeDescription(city.cityName),
     }));
     await db.insert(homes).values(rows);
     await db
