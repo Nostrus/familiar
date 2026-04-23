@@ -4,6 +4,7 @@
   "license": "MIT",
   "scripts": {
     "prepare": "command -v husky >/dev/null 2>&1 && husky || true",
+    "build": "npm --workspace @org/web run build",
     "lint": "nx run-many -t lint --all",
     "lint:fix": "nx run-many -t lint --all -- --fix",
     "format": "prettier . --write",
