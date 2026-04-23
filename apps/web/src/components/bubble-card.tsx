@@ -16,7 +16,7 @@ export function BubbleCard({ destination }: BubbleCardProps) {
   return (
     <Link
       href="#"
-      className="group relative overflow-hidden rounded-2xl border border-border bg-card p-6 transition-shadow hover:shadow-md"
+      className="group relative flex flex-col overflow-hidden rounded-2xl border border-border bg-card p-6 transition-shadow hover:shadow-md"
     >
       <div className="mb-4 flex items-start justify-between">
         <div>
@@ -30,9 +30,9 @@ export function BubbleCard({ destination }: BubbleCardProps) {
         </span>
       </div>
       <p className="text-sm text-muted-foreground">{destination.tagline}</p>
-      <div className="mt-4 flex items-center gap-1 text-sm font-medium text-primary opacity-0 transition-opacity group-hover:opacity-100">
+      <div className="mt-auto pt-4 flex items-center gap-1 text-sm font-medium text-primary">
         Browse listings
-        <MoveRight className="h-4 w-4 translate-x-0 transition-transform group-hover:translate-x-1" />
+        <MoveRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
       </div>
     </Link>
   );
