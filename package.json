@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "prepare": "husky",
+    "prepare": "command -v husky >/dev/null 2>&1 && husky || true",
     "lint": "nx run-many -t lint --all",
     "lint:fix": "nx run-many -t lint --all -- --fix",
     "format": "prettier . --write",
