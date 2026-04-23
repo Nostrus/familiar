@@ -1,5 +1,5 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "installCommand": "npm install --include=dev",
-  "buildCommand": "npx nx run @org/web:build"
+  "installCommand": "npm install",
+  "buildCommand": "cd apps/web && npx next build"
 }
