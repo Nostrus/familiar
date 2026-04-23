@@ -16,5 +16,21 @@ export const cities = pgTable('cities', {
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 });
 
+export const homes = pgTable('homes', {
+  id: serial('id').primaryKey(),
+  cityId: integer('city_id')
+    .notNull()
+    .references(() => cities.id, { onDelete: 'cascade' }),
+  city: text('city').notNull(),
+  country: text('country').notNull(),
+  bedrooms: integer('bedrooms').notNull(),
+  bathrooms: integer('bathrooms').notNull(),
+  maxGuests: integer('max_guests').notNull(),
+  amenities: text('amenities').array().default([]).notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+});
+
 export type City = typeof cities.$inferSelect;
+export type Home = typeof homes.$inferSelect;
 export type User = typeof clerkUsers.$inferSelect;

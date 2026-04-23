@@ -1,6 +1,7 @@
 import 'dotenv/config';
+import { eq, sql } from 'drizzle-orm';
 import { db } from './index';
-import { cities } from './schema';
+import { cities, homes } from './schema';
 
 const popularDestinations = [
   {
@@ -8,50 +9,129 @@ const popularDestinations = [
     country: 'France',
     cityDescription:
       'Charming Haussmann apartments and Montmartre studios steps from the best bistros.',
-    listingCount: 382,
+    listingCount: 0,
   },
   {
     cityName: 'Barcelona',
     country: 'Spain',
     cityDescription: 'Modernist flats, rooftop terraces, and beach-side bungalows across the city.',
-    listingCount: 294,
+    listingCount: 0,
   },
   {
     cityName: 'Lisbon',
     country: 'Portugal',
     cityDescription: "Pastel-tiled townhouses and hilltop miradouro views in one of Europe's gems.",
-    listingCount: 211,
+    listingCount: 0,
   },
   {
     cityName: 'Tokyo',
     country: 'Japan',
     cityDescription: 'Traditional machiya, minimalist apartments, and quiet garden retreats.',
-    listingCount: 187,
+    listingCount: 0,
   },
   {
     cityName: 'New York',
     country: 'United States',
     cityDescription: 'Brooklyn brownstones, Manhattan lofts, and Upper West Side classic sixes.',
-    listingCount: 425,
+    listingCount: 0,
   },
   {
     cityName: 'Amsterdam',
     country: 'Netherlands',
     cityDescription: 'Canal-front townhouses and creative Jordaan-neighbourhood flats.',
-    listingCount: 163,
+    listingCount: 0,
   },
 ];
 
-async function main() {
-  const existingCities = await db.select({ id: cities.id }).from(cities).limit(1);
+type HomeTemplate = {
+  bedrooms: number;
+  bathrooms: number;
+  maxGuests: number;
+  amenities: string[];
+};
 
-  if (existingCities.length > 0) {
-    console.info('Cities already exist. Seed skipped.');
+const homeTemplates: HomeTemplate[] = [
+  { bedrooms: 1, bathrooms: 1, maxGuests: 2, amenities: ['wifi', 'ac', 'washing_machine'] },
+  {
+    bedrooms: 2,
+    bathrooms: 1,
+    maxGuests: 4,
+    amenities: ['wifi', 'pet_friendly', 'washing_machine', 'dishwasher'],
+  },
+  {
+    bedrooms: 3,
+    bathrooms: 2,
+    maxGuests: 6,
+    amenities: ['wifi', 'ac', 'parking', 'washing_machine', 'dishwasher'],
+  },
+  { bedrooms: 1, bathrooms: 1, maxGuests: 2, amenities: ['wifi', 'pet_friendly'] },
+  {
+    bedrooms: 2,
+    bathrooms: 2,
+    maxGuests: 5,
+    amenities: ['wifi', 'ac', 'parking', 'washing_machine', 'dishwasher'],
+  },
+  {
+    bedrooms: 4,
+    bathrooms: 2,
+    maxGuests: 8,
+    amenities: ['wifi', 'ac', 'parking', 'pet_friendly', 'washing_machine', 'dishwasher'],
+  },
+  { bedrooms: 1, bathrooms: 1, maxGuests: 3, amenities: ['wifi', 'washing_machine'] },
+  {
+    bedrooms: 3,
+    bathrooms: 1,
+    maxGuests: 5,
+    amenities: ['wifi', 'ac', 'pet_friendly', 'dishwasher'],
+  },
+];
+
+function pickHomes(count: number) {
+  const shuffled = [...homeTemplates].sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, count);
+}
+
+async function main() {
+  // Seed cities if not present
+  let cityRows = await db
+    .select({ id: cities.id, cityName: cities.cityName, country: cities.country })
+    .from(cities);
+  if (cityRows.length === 0) {
+    cityRows = await db.insert(cities).values(popularDestinations).returning({
+      id: cities.id,
+      cityName: cities.cityName,
+      country: cities.country,
+    });
+    console.info('Seeded popular destination cities.');
+  } else {
+    console.info('Cities already exist, skipping city seed.');
+  }
+
+  // Seed homes if not present
+  const existingHomes = await db.select({ id: homes.id }).from(homes).limit(1);
+  if (existingHomes.length > 0) {
+    console.info('Homes already exist. Seed skipped.');
     return;
   }
 
-  await db.insert(cities).values(popularDestinations);
-  console.info('Seeded popular destination cities.');
+  for (const city of cityRows) {
+    const count = 5 + Math.floor(Math.random() * 4); // 5–8
+    const templates = pickHomes(count);
+    const rows = templates.map((t) => ({
+      ...t,
+      cityId: city.id,
+      city: city.cityName,
+      country: city.country,
+    }));
+    await db.insert(homes).values(rows);
+    await db
+      .update(cities)
+      .set({ listingCount: sql`(select count(*) from homes where city_id = ${city.id})` })
+      .where(eq(cities.id, city.id));
+    console.info(`  ${city.cityName}: inserted ${count} homes, updated listing_count.`);
+  }
+
+  console.info('Homes seeded successfully.');
 }
 
 main().catch((error) => {
