@@ -1,7 +1,8 @@
-import { HomeAmenities } from '@/components/home-amenities';
 import { getHome } from '@/db/queries/get-home';
 import { Bath, Bed, Users } from 'lucide-react';
 import { notFound } from 'next/navigation';
+import { HomeAmenities } from './components/home-amenities';
+import { HomeAvailability } from './components/home-availability';
 
 export default async function HomePage(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
@@ -47,8 +48,9 @@ export default async function HomePage(props: { params: Promise<{ id: string }> 
         </div>
       </div>
 
-      <div className="mx-auto w-full max-w-4xl px-6 py-12 md:px-10">
+      <div className="mx-auto w-full max-w-4xl space-y-10 px-6 py-12 md:px-10">
         <HomeAmenities amenities={home.amenities} />
+        <HomeAvailability availability={home.availability} />
       </div>
     </main>
   );

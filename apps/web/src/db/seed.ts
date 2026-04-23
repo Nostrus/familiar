@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import { eq, sql } from 'drizzle-orm';
 import { db } from './index';
-import { cities, homes } from './schema';
+import { cities, homeAvailability, homes } from './schema';
 
 const popularDestinations = [
   {
@@ -114,6 +114,32 @@ function pickHomes(count: number) {
   return shuffled.slice(0, count);
 }
 
+function addDays(date: Date, days: number): Date {
+  const d = new Date(date);
+  d.setDate(d.getDate() + days);
+  return d;
+}
+
+function toDateString(date: Date): string {
+  return date.toISOString().split('T')[0];
+}
+
+function generateAvailabilityRanges(homeId: number) {
+  const count = 1 + Math.floor(Math.random() * 3); // 1–3
+  const ranges: { homeId: number; startDate: string; endDate: string }[] = [];
+  // Start from a random offset in the next 0–30 days
+  let cursor = addDays(new Date(), Math.floor(Math.random() * 30));
+  for (let i = 0; i < count; i++) {
+    const start = cursor;
+    const duration = 7 + Math.floor(Math.random() * 22); // 7–28 days long
+    const end = addDays(start, duration);
+    ranges.push({ homeId, startDate: toDateString(start), endDate: toDateString(end) });
+    // Gap of 3–10 days before the next range
+    cursor = addDays(end, 3 + Math.floor(Math.random() * 8));
+  }
+  return ranges;
+}
+
 async function main() {
   // Seed cities if not present
   let cityRows = await db
@@ -131,13 +157,28 @@ async function main() {
   }
 
   // Seed homes if not present
-  const existingHomes = await db.select({ id: homes.id }).from(homes).limit(1);
+  const existingHomes = await db.select({ id: homes.id }).from(homes);
   if (existingHomes.length > 0) {
     await db
       .update(homes)
       .set({ description: sql`concat('Charming and cozy ', city, ' home')` })
       .where(eq(homes.description, ''));
     console.info('Homes already exist. Backfilled missing descriptions.');
+
+    // Seed availability if none exist yet
+    const existingAvailability = await db
+      .select({ id: homeAvailability.id })
+      .from(homeAvailability)
+      .limit(1);
+    if (existingAvailability.length === 0) {
+      const availabilityRows = existingHomes.flatMap((h) => generateAvailabilityRanges(h.id));
+      await db.insert(homeAvailability).values(availabilityRows);
+      console.info(
+        `Seeded ${availabilityRows.length} availability ranges for ${existingHomes.length} homes.`,
+      );
+    } else {
+      console.info('Availability already exists, skipping.');
+    }
     return;
   }
 
@@ -157,6 +198,16 @@ async function main() {
       .set({ listingCount: sql`(select count(*) from homes where city_id = ${city.id})` })
       .where(eq(cities.id, city.id));
     console.info(`  ${city.cityName}: inserted ${count} homes, updated listing_count.`);
+  }
+
+  // Seed availability ranges for all homes
+  const allHomes = await db.select({ id: homes.id }).from(homes);
+  const availabilityRows = allHomes.flatMap((h) => generateAvailabilityRanges(h.id));
+  if (availabilityRows.length > 0) {
+    await db.insert(homeAvailability).values(availabilityRows);
+    console.info(
+      `Seeded ${availabilityRows.length} availability ranges for ${allHomes.length} homes.`,
+    );
   }
 
   console.info('Homes seeded successfully.');
