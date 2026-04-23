@@ -23,6 +23,7 @@ export const homes = pgTable('homes', {
     .references(() => cities.id, { onDelete: 'cascade' }),
   city: text('city').notNull(),
   country: text('country').notNull(),
+  description: text('description').default('').notNull(),
   bedrooms: integer('bedrooms').notNull(),
   bathrooms: integer('bathrooms').notNull(),
   maxGuests: integer('max_guests').notNull(),
