@@ -49,20 +49,19 @@
     "jest-environment-jsdom": "^30.0.2",
     "jest-util": "^30.0.2",
     "nx": "22.6.5",
+    "postcss": "^8.5.10",
     "prettier": "^3.8.3",
+    "tailwindcss": "^4.2.4",
     "ts-jest": "^29.4.0",
     "ts-node": "10.9.1",
     "tslib": "^2.3.0",
     "typescript": "~5.9.2",
     "typescript-eslint": "^8.58.2"
   },
-  "workspaces": [
-    "packages/*",
-    "apps/*"
-  ],
   "dependencies": {
     "next": "~16.1.6",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
-  }
+  },
+  "packageManager": "pnpm@9.12.0"
 }
