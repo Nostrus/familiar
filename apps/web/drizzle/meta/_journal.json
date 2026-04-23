@@ -8,6 +8,13 @@
       "when": 1776870828528,
       "tag": "0000_broad_proudstar",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1776931471101,
+      "tag": "0001_melodic_lionheart",
+      "breakpoints": true
     }
   ]
 }

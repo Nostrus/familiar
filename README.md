@@ -64,6 +64,18 @@ Supported events:
 
 Configure this endpoint in Clerk Webhooks and use the same signing secret in all runtime environments.
 
+## Frontend
+
+The homepage (`apps/web/src/app/page.tsx`) renders three sections:
+
+- **Hero** — headline and CTA
+- **Popular Destinations** — DB-backed city cards loaded via React Suspense with an animated skeleton fallback
+- **How It Works** — feature overview
+
+### Popular Destinations
+
+- The section streams in using React Suspense — `PopularDestinationsSkeleton` shows while data loads
+
 ## Project Structure
 
 - `apps/web` — Next.js marketing site and dashboard
