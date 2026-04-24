@@ -2,8 +2,9 @@
 
 import { db } from '@/db';
 import { homeStayRequests, homes } from '@/db/schema';
-import { and, eq } from 'drizzle-orm';
+import { ensureClerkUser } from '@/lib/ensure-clerk-user';
 import { auth } from '@clerk/nextjs/server';
+import { and, eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 
 function parseId(value: FormDataEntryValue | null): number {
@@ -30,6 +31,7 @@ export async function createStayRequest(formData: FormData) {
   if (!userId) {
     throw new Error('You must be signed in to request a stay.');
   }
+  await ensureClerkUser({ clerkUserId: userId });
 
   const homeId = parseId(formData.get('homeId'));
   const requestedStartDate = parseDate(formData.get('requestedStartDate'));
@@ -85,6 +87,7 @@ export async function updateStayRequestStatus(formData: FormData) {
   if (!userId) {
     throw new Error('You must be signed in.');
   }
+  await ensureClerkUser({ clerkUserId: userId });
 
   const homeId = parseId(formData.get('homeId'));
   const requestId = parseId(formData.get('requestId'));
