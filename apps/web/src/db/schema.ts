@@ -34,6 +34,7 @@ export const homes = pgTable('homes', {
   bathrooms: integer('bathrooms').notNull(),
   maxGuests: integer('max_guests').notNull(),
   amenities: text('amenities').array().default([]).notNull(),
+  photos: text('photos').array().default([]).notNull(),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 });

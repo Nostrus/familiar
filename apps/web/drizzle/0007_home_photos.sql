@@ -1,0 +1,1 @@
+ALTER TABLE "homes" ADD COLUMN IF NOT EXISTS "photos" text[] DEFAULT '{}' NOT NULL;
