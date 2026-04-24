@@ -1,13 +1,15 @@
 import 'server-only';
 
 import { db } from '@/db';
-import { homeAvailability, homes } from '@/db/schema';
-import { eq } from 'drizzle-orm';
+import { homeAvailability, homeStayRequests, homes } from '@/db/schema';
+import { and, desc, eq } from 'drizzle-orm';
 import { cache } from 'react';
 
-export const getHome = cache(async (id: number) => {
+export const getHome = cache(async (id: number, viewerClerkUserId?: string) => {
   const home = await db.select().from(homes).where(eq(homes.id, id)).limit(1);
   if (!home[0]) return null;
+
+  const isOwner = !!viewerClerkUserId && home[0].ownerId === viewerClerkUserId;
 
   const availability = await db
     .select({
@@ -19,5 +21,45 @@ export const getHome = cache(async (id: number) => {
     .where(eq(homeAvailability.homeId, id))
     .orderBy(homeAvailability.startDate);
 
-  return { ...home[0], availability };
+  const viewerRequest = viewerClerkUserId
+    ? await db
+        .select({
+          id: homeStayRequests.id,
+          status: homeStayRequests.status,
+          requestedStartDate: homeStayRequests.requestedStartDate,
+          requestedEndDate: homeStayRequests.requestedEndDate,
+          createdAt: homeStayRequests.createdAt,
+        })
+        .from(homeStayRequests)
+        .where(
+          and(
+            eq(homeStayRequests.homeId, id),
+            eq(homeStayRequests.requesterId, viewerClerkUserId),
+          ),
+        )
+        .orderBy(desc(homeStayRequests.createdAt))
+        .limit(1)
+    : [];
+
+  const pendingRequestsForOwner = isOwner
+    ? await db
+        .select({
+          id: homeStayRequests.id,
+          requesterId: homeStayRequests.requesterId,
+          status: homeStayRequests.status,
+          requestedStartDate: homeStayRequests.requestedStartDate,
+          requestedEndDate: homeStayRequests.requestedEndDate,
+          createdAt: homeStayRequests.createdAt,
+        })
+        .from(homeStayRequests)
+        .where(and(eq(homeStayRequests.homeId, id), eq(homeStayRequests.status, 'pending')))
+        .orderBy(desc(homeStayRequests.createdAt))
+    : [];
+
+  return {
+    ...home[0],
+    availability,
+    viewerRequest: viewerRequest[0] ?? null,
+    pendingRequestsForOwner,
+  };
 });
