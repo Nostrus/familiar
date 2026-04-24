@@ -71,7 +71,11 @@ export default async function HomePage(props: { params: Promise<{ id: string }> 
                     src={photoUrl}
                     alt={`Photo ${index + 1} of this home`}
                     fill
-                    sizes={index === 0 ? '(max-width: 640px) 100vw, 896px' : '(max-width: 640px) 100vw, 448px'}
+                    sizes={
+                      index === 0
+                        ? '(max-width: 640px) 100vw, 896px'
+                        : '(max-width: 640px) 100vw, 448px'
+                    }
                     className="object-cover"
                   />
                 </div>

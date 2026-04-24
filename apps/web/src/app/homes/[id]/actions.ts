@@ -127,3 +127,42 @@ export async function updateStayRequestStatus(formData: FormData) {
 
   revalidatePath(`/homes/${homeId}`);
 }
+
+export async function cancelMyStayRequest(formData: FormData) {
+  const { userId } = await auth();
+  if (!userId) {
+    throw new Error('You must be signed in.');
+  }
+
+  const requestId = parseId(formData.get('requestId'));
+
+  const request = await db
+    .select({
+      id: homeStayRequests.id,
+      homeId: homeStayRequests.homeId,
+      requesterId: homeStayRequests.requesterId,
+      status: homeStayRequests.status,
+    })
+    .from(homeStayRequests)
+    .where(eq(homeStayRequests.id, requestId))
+    .limit(1);
+
+  if (!request[0]) {
+    throw new Error('Request not found.');
+  }
+
+  if (request[0].requesterId !== userId) {
+    throw new Error('You are not allowed to cancel this request.');
+  }
+
+  if (request[0].status !== 'pending') {
+    revalidatePath('/my-requests');
+    revalidatePath(`/homes/${request[0].homeId}`);
+    return;
+  }
+
+  await db.delete(homeStayRequests).where(eq(homeStayRequests.id, requestId));
+
+  revalidatePath('/my-requests');
+  revalidatePath(`/homes/${request[0].homeId}`);
+}
