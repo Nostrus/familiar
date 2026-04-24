@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import { eq, sql } from 'drizzle-orm';
 import { db } from './index';
-import { cities, homeAvailability, homes } from './schema';
+import { cities, clerkUsers, homeAvailability, homes } from './schema';
 
 const popularDestinations = [
   {
@@ -141,6 +141,8 @@ function generateAvailabilityRanges(homeId: number) {
 }
 
 async function main() {
+  const users = await db.select({ clerkUserId: clerkUsers.clerkUserId }).from(clerkUsers);
+
   // Seed cities if not present
   let cityRows = await db
     .select({ id: cities.id, cityName: cities.cityName, country: cities.country })
@@ -157,13 +159,25 @@ async function main() {
   }
 
   // Seed homes if not present
-  const existingHomes = await db.select({ id: homes.id }).from(homes);
+  const existingHomes = await db.select({ id: homes.id, ownerId: homes.ownerId }).from(homes);
   if (existingHomes.length > 0) {
     await db
       .update(homes)
       .set({ description: sql`concat('Charming and cozy ', city, ' home')` })
       .where(eq(homes.description, ''));
     console.info('Homes already exist. Backfilled missing descriptions.');
+
+    if (users.length > 0) {
+      for (const home of existingHomes) {
+        if (!home.ownerId) {
+          await db
+            .update(homes)
+            .set({ ownerId: pickRandom(users).clerkUserId })
+            .where(eq(homes.id, home.id));
+        }
+      }
+      console.info('Backfilled missing home owners from existing Clerk users.');
+    }
 
     // Seed availability if none exist yet
     const existingAvailability = await db
@@ -191,6 +205,7 @@ async function main() {
       city: city.cityName,
       country: city.country,
       description: generateHomeDescription(city.cityName),
+      ownerId: users.length > 0 ? pickRandom(users).clerkUserId : null,
     }));
     await db.insert(homes).values(rows);
     await db

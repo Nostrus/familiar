@@ -1,10 +1,13 @@
+import { auth } from '@clerk/nextjs/server';
 import { getHome } from '@/db/queries/get-home';
 import { Bath, Bed, Users } from 'lucide-react';
 import { notFound } from 'next/navigation';
 import { HomeAmenities } from './components/home-amenities';
 import { HomeAvailability } from './components/home-availability';
+import { HomeStayRequests } from './components/home-stay-requests';
 
 export default async function HomePage(props: { params: Promise<{ id: string }> }) {
+  const { userId } = await auth();
   const params = await props.params;
   const homeId = parseInt(params.id, 10);
 
@@ -12,13 +15,15 @@ export default async function HomePage(props: { params: Promise<{ id: string }> 
     notFound();
   }
 
-  const home = await getHome(homeId);
+  const home = await getHome(homeId, userId ?? undefined);
 
   if (!home) {
     notFound();
   }
 
   const homeTitle = home.description || `${home.bedrooms} bd, ${home.bathrooms} ba home`;
+  const isOwner = !!userId && home.ownerId === userId;
+  const canReceiveRequests = !!home.ownerId;
 
   return (
     <main className="min-h-screen bg-linear-to-br from-slate-50 via-white to-blue-50">
@@ -49,6 +54,13 @@ export default async function HomePage(props: { params: Promise<{ id: string }> 
       </div>
 
       <div className="mx-auto w-full max-w-4xl space-y-10 px-6 py-12 md:px-10">
+        <HomeStayRequests
+          homeId={home.id}
+          isOwner={isOwner}
+          canReceiveRequests={canReceiveRequests}
+          viewerRequest={home.viewerRequest}
+          pendingRequestsForOwner={home.pendingRequestsForOwner}
+        />
         <HomeAmenities amenities={home.amenities} />
         <HomeAvailability availability={home.availability} />
       </div>

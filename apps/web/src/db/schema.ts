@@ -18,6 +18,9 @@ export const cities = pgTable('cities', {
 
 export const homes = pgTable('homes', {
   id: serial('id').primaryKey(),
+  ownerId: text('owner_id').references(() => clerkUsers.clerkUserId, {
+    onDelete: 'set null',
+  }),
   cityId: integer('city_id')
     .notNull()
     .references(() => cities.id, { onDelete: 'cascade' }),
@@ -48,3 +51,20 @@ export const homeAvailability = pgTable('home_availability', {
 });
 
 export type HomeAvailability = typeof homeAvailability.$inferSelect;
+
+export const homeStayRequests = pgTable('home_stay_requests', {
+  id: serial('id').primaryKey(),
+  homeId: integer('home_id')
+    .notNull()
+    .references(() => homes.id, { onDelete: 'cascade' }),
+  requesterId: text('requester_id')
+    .notNull()
+    .references(() => clerkUsers.clerkUserId, { onDelete: 'cascade' }),
+  requestedStartDate: date('requested_start_date').notNull(),
+  requestedEndDate: date('requested_end_date').notNull(),
+  status: text('status').$type<'pending' | 'approved' | 'rejected'>().default('pending').notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+});
+
+export type HomeStayRequest = typeof homeStayRequests.$inferSelect;
