@@ -1,9 +1,11 @@
 import { getHome } from '@/db/queries/get-home';
 import { auth } from '@clerk/nextjs/server';
 import { Bath, Bed, Users } from 'lucide-react';
+import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { HomeAmenities } from './components/home-amenities';
 import { HomeAvailability } from './components/home-availability';
+import { HomeEditForm } from './components/home-edit-form';
 import { HomeStayRequests } from './components/home-stay-requests';
 
 export default async function HomePage(props: { params: Promise<{ id: string }> }) {
@@ -54,6 +56,46 @@ export default async function HomePage(props: { params: Promise<{ id: string }> 
       </div>
 
       <div className="mx-auto w-full max-w-4xl space-y-10 px-6 py-12 md:px-10">
+        {home.photos.length > 0 ? (
+          <section aria-label="Home photos" className="space-y-3">
+            <h2 className="text-sm font-semibold tracking-wide text-slate-700 uppercase">Photos</h2>
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              {home.photos.map((photoUrl, index) => (
+                <div
+                  key={photoUrl}
+                  className={`relative overflow-hidden rounded-2xl border border-slate-200 bg-slate-100 shadow-sm ${
+                    index === 0 ? 'aspect-16/10 sm:col-span-2' : 'aspect-4/3'
+                  }`}
+                >
+                  <Image
+                    src={photoUrl}
+                    alt={`Photo ${index + 1} of this home`}
+                    fill
+                    sizes={index === 0 ? '(max-width: 640px) 100vw, 896px' : '(max-width: 640px) 100vw, 448px'}
+                    className="object-cover"
+                  />
+                </div>
+              ))}
+            </div>
+          </section>
+        ) : (
+          <section className="rounded-2xl border border-dashed border-slate-300 bg-white/70 p-5">
+            <p className="text-sm text-slate-600">No photos uploaded yet.</p>
+          </section>
+        )}
+
+        {isOwner && (
+          <HomeEditForm
+            home={{
+              id: home.id,
+              description: home.description,
+              city: home.city,
+              country: home.country,
+              amenities: home.amenities,
+              photos: home.photos,
+            }}
+          />
+        )}
         <HomeStayRequests
           homeId={home.id}
           isOwner={isOwner}

@@ -9,7 +9,7 @@ export function HomeAmenities({ amenities }: HomeAmenitiesProps) {
     <div className="mb-12">
       <h2 className="mb-6 text-2xl font-bold text-slate-900">Amenities</h2>
       {amenities.length > 0 ? (
-        <div className="grid grid-cols-2 gap-0 sm:grid-cols-3 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
           {amenities.map((amenity) => {
             const amenityInfo = getAmenity(amenity);
             const Icon = amenityInfo.icon;
