@@ -1,10 +1,10 @@
 'use client';
 
-import { AMENITIES, AmenityKey } from '@/lib/amenities';
 import { Home } from '@/db/schema';
+import { AMENITIES, AmenityKey } from '@/lib/amenities';
+import Image from 'next/image';
 import { useRef, useState, useTransition } from 'react';
 import { removeHomePhoto, updateHome, uploadHomePhoto } from '../edit-actions';
-import Image from 'next/image';
 
 type Props = {
   home: Pick<Home, 'id' | 'description' | 'city' | 'country' | 'amenities' | 'photos'>;
@@ -38,7 +38,9 @@ export function HomeEditForm({ home }: Props) {
 
   async function handlePhotoUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
-    if (!file) { return; }
+    if (!file) {
+      return;
+    }
     setUploadPending(true);
     setError(null);
     try {
@@ -50,7 +52,9 @@ export function HomeEditForm({ home }: Props) {
       setError(err instanceof Error ? err.message : 'Upload failed.');
     } finally {
       setUploadPending(false);
-      if (fileRef.current) { fileRef.current.value = ''; }
+      if (fileRef.current) {
+        fileRef.current.value = '';
+      }
     }
   }
 
@@ -184,7 +188,12 @@ export function HomeEditForm({ home }: Props) {
                   aria-label="Remove photo"
                 >
                   <svg className="h-3 w-3" viewBox="0 0 12 12" fill="currentColor">
-                    <path d="M1 1l10 10M11 1L1 11" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                    <path
+                      d="M1 1l10 10M11 1L1 11"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                    />
                   </svg>
                 </button>
               </div>

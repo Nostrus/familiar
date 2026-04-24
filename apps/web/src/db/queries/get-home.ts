@@ -4,6 +4,7 @@ import { db } from '@/db';
 import { homeAvailability, homeStayRequests, homes } from '@/db/schema';
 import { and, desc, eq } from 'drizzle-orm';
 import { cache } from 'react';
+import { getStayRequests } from './get-stay-requests';
 
 export const getHome = cache(async (id: number, viewerClerkUserId?: string) => {
   const home = await db.select().from(homes).where(eq(homes.id, id)).limit(1);
@@ -39,18 +40,7 @@ export const getHome = cache(async (id: number, viewerClerkUserId?: string) => {
     : [];
 
   const pendingRequestsForOwner = isOwner
-    ? await db
-        .select({
-          id: homeStayRequests.id,
-          requesterId: homeStayRequests.requesterId,
-          status: homeStayRequests.status,
-          requestedStartDate: homeStayRequests.requestedStartDate,
-          requestedEndDate: homeStayRequests.requestedEndDate,
-          createdAt: homeStayRequests.createdAt,
-        })
-        .from(homeStayRequests)
-        .where(and(eq(homeStayRequests.homeId, id), eq(homeStayRequests.status, 'pending')))
-        .orderBy(desc(homeStayRequests.createdAt))
+    ? await getStayRequests({ homeId: id, status: 'pending' })
     : [];
 
   return {

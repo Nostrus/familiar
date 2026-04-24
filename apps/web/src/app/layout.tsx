@@ -1,10 +1,10 @@
+import { ensureClerkUser } from '@/lib/ensure-clerk-user';
 import { cn } from '@/lib/utils';
 import { ClerkProvider, Show, UserButton } from '@clerk/nextjs';
 import { auth, currentUser } from '@clerk/nextjs/server';
 import type { Metadata } from 'next';
 import { Nunito_Sans } from 'next/font/google';
 import Link from 'next/link';
-import { ensureClerkUser } from '@/lib/ensure-clerk-user';
 import './globals.css';
 
 const nunitoSans = Nunito_Sans({ subsets: ['latin'], variable: '--font-sans' });
@@ -45,6 +45,30 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               </Link>
             </Show>
             <Show when="signed-in">
+              <Link
+                href="/explore"
+                className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+              >
+                Explore
+              </Link>
+              <Link
+                href="/my-home"
+                className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+              >
+                My Home
+              </Link>
+              <Link
+                href="/my-requests"
+                className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+              >
+                My requests
+              </Link>
+              <Link
+                href="/my-favorites"
+                className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+              >
+                My favorites
+              </Link>
               <Link
                 href="/my-profile"
                 className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
