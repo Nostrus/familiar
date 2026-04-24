@@ -32,10 +32,7 @@ export const getHome = cache(async (id: number, viewerClerkUserId?: string) => {
         })
         .from(homeStayRequests)
         .where(
-          and(
-            eq(homeStayRequests.homeId, id),
-            eq(homeStayRequests.requesterId, viewerClerkUserId),
-          ),
+          and(eq(homeStayRequests.homeId, id), eq(homeStayRequests.requesterId, viewerClerkUserId)),
         )
         .orderBy(desc(homeStayRequests.createdAt))
         .limit(1)

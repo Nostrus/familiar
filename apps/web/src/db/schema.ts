@@ -2,6 +2,9 @@ import { date, integer, pgTable, serial, text, timestamp } from 'drizzle-orm/pg-
 
 export const clerkUsers = pgTable('clerk_users', {
   clerkUserId: text('clerk_user_id').primaryKey(),
+  firstName: text('first_name'),
+  lastName: text('last_name'),
+  email: text('email'),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 });

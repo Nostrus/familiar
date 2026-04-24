@@ -1,5 +1,5 @@
-import { auth } from '@clerk/nextjs/server';
 import { getHome } from '@/db/queries/get-home';
+import { auth } from '@clerk/nextjs/server';
 import { Bath, Bed, Users } from 'lucide-react';
 import { notFound } from 'next/navigation';
 import { HomeAmenities } from './components/home-amenities';

@@ -14,6 +14,12 @@ export async function POST(request: NextRequest) {
       case 'user.created':
       case 'user.updated': {
         const clerkUserId = event.data.id;
+        const firstName = event.data.first_name ?? null;
+        const lastName = event.data.last_name ?? null;
+        const primaryEmailAddressId = event.data.primary_email_address_id ?? null;
+        const email =
+          event.data.email_addresses?.find((entry) => entry.id === primaryEmailAddressId)
+            ?.email_address ?? null;
 
         if (!clerkUserId) {
           return Response.json({ ok: true });
@@ -23,11 +29,17 @@ export async function POST(request: NextRequest) {
           .insert(clerkUsers)
           .values({
             clerkUserId,
+            firstName,
+            lastName,
+            email,
             updatedAt: new Date(),
           })
           .onConflictDoUpdate({
             target: clerkUsers.clerkUserId,
             set: {
+              firstName,
+              lastName,
+              email,
               updatedAt: new Date(),
             },
           });
