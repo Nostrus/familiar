@@ -1,8 +1,11 @@
+import { Button } from '@/components/ui/button';
 import { getHome } from '@/db/queries/get-home';
+import { Show } from '@clerk/nextjs';
 import { auth } from '@clerk/nextjs/server';
-import { Bath, Bed, Users } from 'lucide-react';
+import { Bath, Bed, Heart, Users } from 'lucide-react';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
+import { toggleFavorite } from './actions';
 import { HomeAmenities } from './components/home-amenities';
 import { HomeAvailability } from './components/home-availability';
 import { HomeEditForm } from './components/home-edit-form';
@@ -37,7 +40,20 @@ export default async function HomePage(props: { params: Promise<{ id: string }> 
               {home.city}, {home.country}
             </span>
           </div>
-          <h1 className="text-3xl font-bold text-slate-900 sm:text-4xl">{homeTitle}</h1>
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <h1 className="text-3xl font-bold text-slate-900 sm:text-4xl">{homeTitle}</h1>
+            <Show when="signed-in">
+              <form action={toggleFavorite}>
+                <input type="hidden" name="homeId" value={home.id} />
+                <Button type="submit" variant="outline" className="gap-2">
+                  <Heart
+                    className={home.isFavorited ? 'fill-current text-rose-500' : 'text-slate-500'}
+                  />
+                  {home.isFavorited ? 'Saved' : 'Save'}
+                </Button>
+              </form>
+            </Show>
+          </div>
           <div className="mt-3 flex items-center gap-4 text-sm text-slate-700">
             <span className="flex items-center gap-1.5">
               <Bed className="h-4 w-4 text-slate-400" />

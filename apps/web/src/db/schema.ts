@@ -1,4 +1,4 @@
-import { date, integer, pgTable, serial, text, timestamp } from 'drizzle-orm/pg-core';
+import { date, integer, pgTable, serial, text, timestamp, unique } from 'drizzle-orm/pg-core';
 
 export const clerkUsers = pgTable('clerk_users', {
   clerkUserId: text('clerk_user_id').primaryKey(),
@@ -72,3 +72,22 @@ export const homeStayRequests = pgTable('home_stay_requests', {
 });
 
 export type HomeStayRequest = typeof homeStayRequests.$inferSelect;
+
+export const homeFavorites = pgTable(
+  'home_favorites',
+  {
+    id: serial('id').primaryKey(),
+    homeId: integer('home_id')
+      .notNull()
+      .references(() => homes.id, { onDelete: 'cascade' }),
+    userId: text('user_id')
+      .notNull()
+      .references(() => clerkUsers.clerkUserId, { onDelete: 'cascade' }),
+    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => ({
+    homeUserUnique: unique('home_favorites_home_user_unique').on(table.homeId, table.userId),
+  }),
+);
+
+export type HomeFavorite = typeof homeFavorites.$inferSelect;

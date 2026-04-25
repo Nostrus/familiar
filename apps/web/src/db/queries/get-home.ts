@@ -1,7 +1,7 @@
 import 'server-only';
 
 import { db } from '@/db';
-import { homeAvailability, homeStayRequests, homes } from '@/db/schema';
+import { homeAvailability, homeFavorites, homeStayRequests, homes } from '@/db/schema';
 import { and, desc, eq } from 'drizzle-orm';
 import { cache } from 'react';
 import { getStayRequests } from './get-stay-requests';
@@ -43,9 +43,18 @@ export const getHome = cache(async (id: number, viewerClerkUserId?: string) => {
     ? await getStayRequests({ homeId: id, status: 'pending' })
     : [];
 
+  const favorite = viewerClerkUserId
+    ? await db
+        .select({ id: homeFavorites.id })
+        .from(homeFavorites)
+        .where(and(eq(homeFavorites.homeId, id), eq(homeFavorites.userId, viewerClerkUserId)))
+        .limit(1)
+    : [];
+
   return {
     ...home[0],
     availability,
+    isFavorited: !!favorite[0],
     viewerRequest: viewerRequest[0] ?? null,
     pendingRequestsForOwner,
   };

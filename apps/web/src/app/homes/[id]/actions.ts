@@ -1,7 +1,7 @@
 'use server';
 
 import { db } from '@/db';
-import { homeStayRequests, homes } from '@/db/schema';
+import { homeFavorites, homeStayRequests, homes } from '@/db/schema';
 import { ensureClerkUser } from '@/lib/ensure-clerk-user';
 import { auth } from '@clerk/nextjs/server';
 import { and, eq } from 'drizzle-orm';
@@ -165,4 +165,30 @@ export async function cancelMyStayRequest(formData: FormData) {
 
   revalidatePath('/my-requests');
   revalidatePath(`/homes/${request[0].homeId}`);
+}
+
+export async function toggleFavorite(formData: FormData) {
+  const { userId } = await auth();
+  if (!userId) {
+    throw new Error('You must be signed in to save favorites.');
+  }
+
+  await ensureClerkUser({ clerkUserId: userId });
+
+  const homeId = parseId(formData.get('homeId'));
+
+  const existingFavorite = await db
+    .select({ id: homeFavorites.id })
+    .from(homeFavorites)
+    .where(and(eq(homeFavorites.homeId, homeId), eq(homeFavorites.userId, userId)))
+    .limit(1);
+
+  if (existingFavorite[0]) {
+    await db.delete(homeFavorites).where(eq(homeFavorites.id, existingFavorite[0].id));
+  } else {
+    await db.insert(homeFavorites).values({ homeId, userId });
+  }
+
+  revalidatePath(`/homes/${homeId}`);
+  revalidatePath('/my-favorites');
 }
