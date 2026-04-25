@@ -46,10 +46,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             </Show>
             <Show when="signed-in">
               <Link
-                href="/explore"
+                href="/discover"
                 className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
               >
-                Explore
+                Discover
               </Link>
               <Link
                 href="/my-home"

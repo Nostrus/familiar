@@ -2,6 +2,7 @@
 
 import { Home } from '@/db/schema';
 import { AMENITIES, AmenityKey } from '@/lib/amenities';
+import { X } from 'lucide-react';
 import Image from 'next/image';
 import { useRef, useState, useTransition } from 'react';
 import { removeHomePhoto, updateHome, uploadHomePhoto } from '../edit-actions';
@@ -187,14 +188,7 @@ export function HomeEditForm({ home }: Props) {
                   className="absolute right-1 top-1 hidden rounded-full bg-black/60 p-1 text-white transition group-hover:flex items-center justify-center"
                   aria-label="Remove photo"
                 >
-                  <svg className="h-3 w-3" viewBox="0 0 12 12" fill="currentColor">
-                    <path
-                      d="M1 1l10 10M11 1L1 11"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                    />
-                  </svg>
+                  <X className="h-3 w-3" strokeWidth={3} />
                 </button>
               </div>
             ))}

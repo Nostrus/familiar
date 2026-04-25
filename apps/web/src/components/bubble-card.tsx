@@ -15,7 +15,7 @@ type BubbleCardProps = {
 export function BubbleCard({ destination }: BubbleCardProps) {
   return (
     <Link
-      href="#"
+      href={`/discover?cities=${encodeURIComponent(destination.city)}`}
       className="group relative flex flex-col overflow-hidden rounded-2xl border border-border bg-card p-6 transition-shadow hover:shadow-md"
     >
       <div className="mb-4 flex items-start justify-between">
