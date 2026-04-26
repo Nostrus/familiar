@@ -10,8 +10,8 @@ jest.mock('../src/db', () => ({
 }));
 
 import { auth } from '@clerk/nextjs/server';
-import { db } from '../src/db';
 import { toggleFavorite, updateStayRequestStatus } from '../src/app/homes/[id]/actions';
+import { db } from '../src/db';
 
 const mockAuth = auth as jest.Mock;
 const mockDbSelect = db.select as jest.Mock;
@@ -92,9 +92,7 @@ describe('updateStayRequestStatus', () => {
   it('throws when not signed in', async () => {
     mockAuth.mockResolvedValue({ userId: null });
     await expect(
-      updateStayRequestStatus(
-        makeFormData({ homeId: '1', requestId: '2', status: 'approved' }),
-      ),
+      updateStayRequestStatus(makeFormData({ homeId: '1', requestId: '2', status: 'approved' })),
     ).rejects.toThrow('signed in');
   });
 
@@ -111,9 +109,7 @@ describe('updateStayRequestStatus', () => {
       limitChain([{ id: 2, homeId: 1, status: 'pending', ownerId: 'owner_other' }]),
     );
     await expect(
-      updateStayRequestStatus(
-        makeFormData({ homeId: '1', requestId: '2', status: 'approved' }),
-      ),
+      updateStayRequestStatus(makeFormData({ homeId: '1', requestId: '2', status: 'approved' })),
     ).rejects.toThrow('not allowed');
   });
 

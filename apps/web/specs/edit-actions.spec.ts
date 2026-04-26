@@ -12,8 +12,8 @@ jest.mock('../src/db', () => ({
 
 import { auth } from '@clerk/nextjs/server';
 import { put } from '@vercel/blob';
-import { db } from '../src/db';
 import { updateHome, uploadHomePhoto } from '../src/app/homes/[id]/edit-actions';
+import { db } from '../src/db';
 
 const mockAuth = auth as jest.Mock;
 const mockPut = put as jest.Mock;

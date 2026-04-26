@@ -11,8 +11,8 @@ jest.mock('../src/db', () => ({
 }));
 
 import { auth } from '@clerk/nextjs/server';
-import { db } from '../src/db';
 import { createStayRequest } from '../src/app/homes/[id]/actions';
+import { db } from '../src/db';
 
 const mockAuth = auth as jest.Mock;
 const mockDbSelect = db.select as jest.Mock;
