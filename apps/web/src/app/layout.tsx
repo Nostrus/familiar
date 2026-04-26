@@ -2,6 +2,7 @@ import { ensureClerkUser } from '@/lib/ensure-clerk-user';
 import { cn } from '@/lib/utils';
 import { ClerkProvider, Show, UserButton } from '@clerk/nextjs';
 import { auth, currentUser } from '@clerk/nextjs/server';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import type { Metadata } from 'next';
 import { Nunito_Sans } from 'next/font/google';
 import Image from 'next/image';
@@ -105,6 +106,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           {children}
         </body>
       </html>
+      <SpeedInsights />
     </ClerkProvider>
   );
 }
