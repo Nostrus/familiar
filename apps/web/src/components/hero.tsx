@@ -1,4 +1,7 @@
 import { Button } from '@/components/ui/button';
+import { db } from '@/db';
+import { homes } from '@/db/schema';
+import { sql } from 'drizzle-orm';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -8,19 +11,33 @@ const trustBadges = [
   '4.9 average host rating',
 ];
 
-export function Hero() {
+async function getHeroImageUrl(): Promise<string | null> {
+  const rows = await db
+    .select({ photos: homes.photos })
+    .from(homes)
+    .where(sql`array_length(${homes.photos}, 1) > 0`)
+    .limit(5)
+    .orderBy(sql`random()`);
+  const row = rows.find((r) => r.photos.length > 0);
+  return row?.photos[0] ?? null;
+}
+
+export async function Hero() {
+  const heroImageUrl = await getHeroImageUrl();
   return (
     <section className="mx-auto w-full max-w-6xl px-6 py-16 md:px-10 md:py-24">
       <div className="relative overflow-hidden rounded-3xl border border-border/40 bg-card">
         <div className="absolute inset-0 scale-105 overflow-hidden">
-          <Image
-            src="/assets/home-samples/modern/ChatGPT%20Image%20Apr%2026,%202026,%2005_17_07%20PM%20(1).webp"
-            alt=""
-            fill
-            priority
-            sizes="(max-width: 768px) 100vw, 1152px"
-            className="object-cover blur-[1px] scale-105"
-          />
+          {heroImageUrl && (
+            <Image
+              src={heroImageUrl}
+              alt=""
+              fill
+              priority
+              sizes="(max-width: 768px) 100vw, 1152px"
+              className="object-cover blur-[1px] scale-105"
+            />
+          )}
         </div>
         <div className="absolute inset-0 bg-linear-to-b from-black/45 via-black/35 to-black/60" />
         <div className="absolute inset-x-0 top-0 h-40 bg-linear-to-b from-white/15 to-transparent" />
