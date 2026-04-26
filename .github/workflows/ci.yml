@@ -14,23 +14,27 @@ jobs:
   main:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           filter: tree:0
           fetch-depth: 0
 
       # Cache node_modules
-      - uses: actions/setup-node@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.12.0
+
+      - uses: actions/setup-node@v5
         with:
           node-version: 24
-          cache: 'npm'
+          cache: 'pnpm'
 
-      - run: npm ci
+      - run: pnpm install --frozen-lockfile
 
       - name: Install Playwright browsers
-        run: npx playwright install --with-deps
+        run: pnpm exec playwright install --with-deps
 
-      - run: npx nx format:check --base="remotes/origin/main"
+      - run: pnpm nx format:check --base="remotes/origin/main"
 
-      - run: npx nx run-many -t lint test build typecheck
-      - run: npx nx run @org/web-e2e:e2e
+      - run: pnpm nx run-many -t lint test build typecheck
+      - run: pnpm nx run @org/web-e2e:e2e
