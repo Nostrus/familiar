@@ -4,6 +4,7 @@ import { Home } from '@/db/schema';
 import { AMENITIES, AmenityKey } from '@/lib/amenities';
 import { X } from 'lucide-react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { useRef, useState, useTransition } from 'react';
 import { removeHomePhoto, updateHome, uploadHomePhoto } from '../edit-actions';
 
@@ -12,11 +13,13 @@ type Props = {
 };
 
 export function HomeEditForm({ home }: Props) {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [uploadPending, setUploadPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>(home.amenities);
+  const [photos, setPhotos] = useState<string[]>(home.photos);
   const fileRef = useRef<HTMLInputElement>(null);
 
   function toggleAmenity(key: string) {
@@ -38,8 +41,8 @@ export function HomeEditForm({ home }: Props) {
   }
 
   async function handlePhotoUpload(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) {
+    const files = Array.from(e.target.files ?? []);
+    if (files.length === 0) {
       return;
     }
     setUploadPending(true);
@@ -47,8 +50,12 @@ export function HomeEditForm({ home }: Props) {
     try {
       const fd = new FormData();
       fd.append('homeId', String(home.id));
-      fd.append('photo', file);
-      await uploadHomePhoto(fd);
+      files.forEach((file) => fd.append('photos', file));
+      const result = await uploadHomePhoto(fd);
+      if (result.urls.length > 0) {
+        setPhotos((prev) => [...prev, ...result.urls]);
+      }
+      router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Upload failed.');
     } finally {
@@ -63,6 +70,8 @@ export function HomeEditForm({ home }: Props) {
     setError(null);
     try {
       await removeHomePhoto(home.id, url);
+      setPhotos((prev) => prev.filter((photo) => photo !== url));
+      router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to remove photo.');
     }
@@ -178,11 +187,17 @@ export function HomeEditForm({ home }: Props) {
       <div className="mt-8 border-t border-slate-100 pt-6">
         <h3 className="mb-3 text-sm font-semibold text-slate-700">Photos</h3>
 
-        {home.photos.length > 0 && (
+        {photos.length > 0 && (
           <div className="mb-4 grid grid-cols-3 gap-2 sm:grid-cols-4">
-            {home.photos.map((url) => (
+            {photos.map((url) => (
               <div key={url} className="group relative aspect-square overflow-hidden rounded-lg">
-                <Image src={url} alt="Home photo" fill className="object-cover" />
+                <Image
+                  src={url}
+                  alt="Home photo"
+                  fill
+                  sizes="(max-width: 640px) 33vw, 25vw"
+                  className="object-cover"
+                />
                 <button
                   onClick={() => handleRemovePhoto(url)}
                   className="absolute right-1 top-1 hidden rounded-full bg-black/60 p-1 text-white transition group-hover:flex items-center justify-center"
@@ -200,11 +215,12 @@ export function HomeEditForm({ home }: Props) {
             ref={fileRef}
             type="file"
             accept="image/*"
+            multiple
             className="sr-only"
             onChange={handlePhotoUpload}
             disabled={uploadPending}
           />
-          {uploadPending ? 'Uploading…' : '+ Add photo'}
+          {uploadPending ? 'Uploading…' : '+ Add photos'}
         </label>
       </div>
     </div>

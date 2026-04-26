@@ -11,6 +11,7 @@
     "db:push": "drizzle-kit push --config drizzle.config.mjs",
     "db:pull": "drizzle-kit pull --config drizzle.config.mjs",
     "db:seed": "tsx src/db/seed.ts",
+    "db:seed:photos": "tsx src/db/seed-home-photos.ts",
     "db:studio": "drizzle-kit studio --config drizzle.config.mjs"
   },
   "dependencies": {

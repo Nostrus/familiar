@@ -22,7 +22,7 @@ export async function FeaturedHomes() {
 
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {homes.map((home) => (
-          <HomeCard key={home.id} home={home} />
+          <HomeCard key={home.id} home={home} preferPhoto />
         ))}
       </div>
     </section>

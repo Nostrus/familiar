@@ -14,11 +14,12 @@ export function Hero() {
       <div className="relative overflow-hidden rounded-3xl border border-border/40 bg-card">
         <div className="absolute inset-0 scale-105 overflow-hidden">
           <Image
-            src="/hero-image.jpg"
+            src="/assets/home-samples/modern/ChatGPT%20Image%20Apr%2026,%202026,%2005_17_07%20PM%20(1).webp"
             alt=""
             fill
             priority
-            className="object-cover blur-[2px] scale-105"
+            sizes="(max-width: 768px) 100vw, 1152px"
+            className="object-cover blur-[1px] scale-105"
           />
         </div>
         <div className="absolute inset-0 bg-linear-to-b from-black/45 via-black/35 to-black/60" />
