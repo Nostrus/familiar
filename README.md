@@ -69,7 +69,7 @@ Configure this endpoint in Clerk Webhooks and use the same signing secret in all
 The homepage (`apps/web/src/app/page.tsx`) renders three sections:
 
 - **Hero** — headline and CTA
-- **Popular Destinations** — DB-backed city cards loaded via React Suspense with an animated skeleton fallback
+- **Popular Destinations** — DB-backed city cards loaded via React Suspense with an animated skeleton fallback, and using a delay for demo purposes
 - **How It Works** — feature overview
 
 ### Popular Destinations

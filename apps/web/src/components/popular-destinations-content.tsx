@@ -2,6 +2,7 @@ import { BubbleCard } from '@/components/bubble-card';
 import { getCities } from '@/db/queries/get-cities';
 
 export async function PopularDestinationsContent() {
+  await new Promise((resolve) => setTimeout(resolve, 2000));
   const destinations = await getCities({ limit: 6 });
 
   return (

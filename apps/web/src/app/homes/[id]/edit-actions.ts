@@ -52,22 +52,36 @@ export async function uploadHomePhoto(formData: FormData) {
   if (!home) throw new Error('Home not found.');
   if (home.ownerId !== userId) throw new Error('Not your home.');
 
-  const file = formData.get('photo') as File | null;
-  if (!file || file.size === 0) throw new Error('No file provided.');
+  const files = formData
+    .getAll('photos')
+    .filter((value): value is File => value instanceof File && value.size > 0);
 
-  const blob = await put(`homes/${homeId}/${file.name}`, file, {
-    access: 'public',
-    addRandomSuffix: true,
-  });
+  if (files.length === 0) {
+    const fallbackFile = formData.get('photo');
+    if (fallbackFile instanceof File && fallbackFile.size > 0) {
+      files.push(fallbackFile);
+    }
+  }
+
+  if (files.length === 0) throw new Error('No file provided.');
+
+  const uploadedUrls: string[] = [];
+  for (const file of files) {
+    const blob = await put(`homes/${homeId}/${file.name}`, file, {
+      access: 'public',
+      addRandomSuffix: true,
+    });
+    uploadedUrls.push(blob.url);
+  }
 
   await db
     .update(homes)
-    .set({ photos: [...home.photos, blob.url], updatedAt: new Date() })
+    .set({ photos: [...home.photos, ...uploadedUrls], updatedAt: new Date() })
     .where(eq(homes.id, homeId));
 
   revalidatePath(`/homes/${homeId}`);
 
-  return { url: blob.url };
+  return { urls: uploadedUrls };
 }
 
 export async function removeHomePhoto(homeId: number, photoUrl: string) {

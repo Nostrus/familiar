@@ -8,9 +8,6 @@ import { cache } from 'react';
 export const getCities = cache(async ({ limit = 6 }) => {
   const safeLimit = limit > 0 ? Math.floor(limit) : 6;
 
-  //add a 2 seconds delay
-  await new Promise((resolve) => setTimeout(resolve, 2000));
-
   return db
     .select({
       city: cities.cityName,

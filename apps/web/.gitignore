@@ -5,3 +5,6 @@
 # local env files (contain secrets)
 .env.local
 .env.*.local
+
+# temporary local sample assets
+public/assets/home-samples/

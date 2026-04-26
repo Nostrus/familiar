@@ -31,7 +31,7 @@ export function BubbleCard({ destination }: BubbleCardProps) {
       </div>
       <p className="text-sm text-muted-foreground">{destination.tagline}</p>
       <div className="mt-auto pt-4 flex items-center gap-1 text-sm font-medium text-primary">
-        Browse listings
+        Explore city
         <MoveRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
       </div>
     </Link>

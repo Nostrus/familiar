@@ -1,4 +1,5 @@
 import { Bath, Bed, Users } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 
 type HomeCardData = {
@@ -25,7 +26,7 @@ export function HomeCard({ home, preferPhoto = false, showLocation = true }: Hom
       href={`/homes/${home.id}`}
       className="group relative flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-linear-to-br from-white to-slate-50 transition-all hover:border-primary hover:shadow-lg"
     >
-      <div className="border-b border-slate-100 p-6">
+      <div className="border-b border-slate-100 px-6 py-4">
         {showLocation ? (
           <p className="mb-1 text-xs font-semibold text-primary">
             {home.city}, {home.country}
@@ -47,11 +48,17 @@ export function HomeCard({ home, preferPhoto = false, showLocation = true }: Hom
         </div>
       </div>
 
-      <div className="grow bg-slate-100">
+      <div className="relative h-60 bg-slate-100">
         {photoUrl ? (
-          <img src={photoUrl} alt={`Home in ${home.city}`} className="h-48 w-full object-cover" />
+          <Image
+            src={photoUrl}
+            alt={`Home in ${home.city}`}
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            className="object-cover"
+          />
         ) : (
-          <div className="h-48 w-full bg-linear-to-br from-slate-200 to-slate-300" />
+          <div className="h-60 w-full bg-linear-to-br from-slate-200 to-slate-300" />
         )}
       </div>
     </Link>
