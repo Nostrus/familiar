@@ -12,28 +12,82 @@ type SearchParams = Promise<{
   guests?: string;
 }>;
 
+type DiscoverResultsProps = {
+  selectedCities: string[];
+  dateFrom?: string;
+  dateTo?: string;
+  guests?: number;
+};
+
+async function DiscoverFilterSection() {
+  const citiesData = await getCities({ limit: 20 });
+  const allCityNames = citiesData.map((c) => c.city);
+  return <DiscoverFilter allCities={allCityNames} />;
+}
+
+async function DiscoverResults({ selectedCities, dateFrom, dateTo, guests }: DiscoverResultsProps) {
+  const homesByCity = await getHomesByCity({
+    cities: selectedCities.length > 0 ? selectedCities : undefined,
+    dateFrom,
+    dateTo,
+    guests: guests && !isNaN(guests) ? guests : undefined,
+  });
+
+  const cityEntries = Object.entries(homesByCity);
+
+  if (cityEntries.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center py-24 text-center">
+        <p className="text-lg font-medium text-slate-700">No homes match your filters.</p>
+        <p className="mt-2 text-sm text-slate-500">
+          Try adjusting the date range or removing some filters.
+        </p>
+        <Link href="/discover" className="mt-6 text-sm font-semibold text-primary hover:underline">
+          Clear filters
+        </Link>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-16">
+      {cityEntries.map(([city, cityHomes], cityIndex) => (
+        <section key={city}>
+          <div className="mb-6 flex items-baseline justify-between">
+            <h2 className="text-2xl font-bold text-slate-900">
+              {city}, {cityHomes[0]?.country}
+            </h2>
+            <span className="text-sm text-slate-500">
+              {cityHomes.length} {cityHomes.length === 1 ? 'home' : 'homes'}
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {cityHomes.map((home, homeIndex) => (
+              <HomeCard
+                key={home.id}
+                home={home}
+                preferPhoto
+                showLocation={false}
+                priority={cityIndex === 0 && homeIndex < 2}
+              />
+            ))}
+          </div>
+        </section>
+      ))}
+    </div>
+  );
+}
+
 export default async function DiscoverPage({ searchParams }: { searchParams: SearchParams }) {
   const params = await searchParams;
   const selectedCities = params.cities ? params.cities.split(',').filter(Boolean) : [];
   const guests = params.guests ? parseInt(params.guests, 10) : undefined;
 
-  const [homesByCity, citiesData] = await Promise.all([
-    getHomesByCity({
-      cities: selectedCities.length > 0 ? selectedCities : undefined,
-      dateFrom: params.from,
-      dateTo: params.to,
-      guests: guests && !isNaN(guests) ? guests : undefined,
-    }),
-    getCities({ limit: 20 }),
-  ]);
-
-  const allCityNames = citiesData.map((c) => c.city);
-  const cityEntries = Object.entries(homesByCity);
-
   return (
-    <main className="min-h-screen ">
-      <Suspense>
-        <DiscoverFilter allCities={allCityNames} />
+    <main className="min-h-screen">
+      <Suspense fallback={<div className="mx-auto max-w-6xl px-6 py-4 md:px-10" />}>
+        <DiscoverFilterSection />
       </Suspense>
 
       <div className="mx-auto max-w-6xl px-6 py-12 md:px-10">
@@ -46,42 +100,22 @@ export default async function DiscoverPage({ searchParams }: { searchParams: Sea
             Browse verified homes in every city. Find your next swap.
           </p>
         </div>
-
-        {cityEntries.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-24 text-center">
-            <p className="text-lg font-medium text-slate-700">No homes match your filters.</p>
-            <p className="mt-2 text-sm text-slate-500">
-              Try adjusting the date range or removing some filters.
-            </p>
-            <Link
-              href="/discover"
-              className="mt-6 text-sm font-semibold text-primary hover:underline"
-            >
-              Clear filters
-            </Link>
-          </div>
-        ) : (
-          <div className="space-y-16">
-            {cityEntries.map(([city, cityHomes]) => (
-              <section key={city}>
-                <div className="mb-6 flex items-baseline justify-between">
-                  <h2 className="text-2xl font-bold text-slate-900">
-                    {city}, {cityHomes[0]?.country}
-                  </h2>
-                  <span className="text-sm text-slate-500">
-                    {cityHomes.length} {cityHomes.length === 1 ? 'home' : 'homes'}
-                  </span>
-                </div>
-
-                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                  {cityHomes.map((home) => (
-                    <HomeCard key={home.id} home={home} preferPhoto showLocation={false} />
-                  ))}
-                </div>
-              </section>
-            ))}
-          </div>
-        )}
+        <Suspense
+          fallback={
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} className="h-96 animate-pulse rounded-2xl bg-slate-100" />
+              ))}
+            </div>
+          }
+        >
+          <DiscoverResults
+            selectedCities={selectedCities}
+            dateFrom={params.from}
+            dateTo={params.to}
+            guests={guests}
+          />
+        </Suspense>
       </div>
     </main>
   );
