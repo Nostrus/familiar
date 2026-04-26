@@ -1,7 +1,4 @@
 import { Button } from '@/components/ui/button';
-import { db } from '@/db';
-import { homes } from '@/db/schema';
-import { sql } from 'drizzle-orm';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -11,19 +8,9 @@ const trustBadges = [
   '4.9 average host rating',
 ];
 
-async function getHeroImageUrl(): Promise<string | null> {
-  const rows = await db
-    .select({ photos: homes.photos })
-    .from(homes)
-    .where(sql`array_length(${homes.photos}, 1) > 0`)
-    .limit(5)
-    .orderBy(sql`random()`);
-  const row = rows.find((r) => r.photos.length > 0);
-  return row?.photos[0] ?? null;
-}
+const heroImageUrl = process.env.NEXT_PUBLIC_HERO_IMAGE_URL ?? null;
 
-export async function Hero() {
-  const heroImageUrl = await getHeroImageUrl();
+export function Hero() {
   return (
     <section className="mx-auto w-full max-w-6xl px-6 py-16 md:px-10 md:py-24">
       <div className="relative overflow-hidden rounded-3xl border border-border/40 bg-card">

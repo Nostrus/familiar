@@ -1,7 +1,5 @@
-import { ensureClerkUser } from '@/lib/ensure-clerk-user';
 import { cn } from '@/lib/utils';
 import { ClerkProvider, Show, UserButton } from '@clerk/nextjs';
-import { auth, currentUser } from '@clerk/nextjs/server';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import type { Metadata } from 'next';
 import { Nunito_Sans } from 'next/font/google';
@@ -17,16 +15,7 @@ export const metadata: Metadata = {
     'Swap homes with trusted members around the world. Skip hotel prices and stay in real neighborhoods like a local.',
 };
 
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const { userId } = await auth();
-  const user = userId ? await currentUser() : null;
-  await ensureClerkUser({
-    clerkUserId: userId,
-    firstName: user?.firstName,
-    lastName: user?.lastName,
-    email: user?.primaryEmailAddress?.emailAddress,
-  });
-
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <ClerkProvider>
       <html lang="en" className={cn('font-sans', nunitoSans.variable)}>
