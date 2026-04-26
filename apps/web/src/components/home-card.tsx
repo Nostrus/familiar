@@ -16,9 +16,15 @@ type HomeCardProps = {
   home: HomeCardData;
   preferPhoto?: boolean;
   showLocation?: boolean;
+  priority?: boolean;
 };
 
-export function HomeCard({ home, preferPhoto = false, showLocation = true }: HomeCardProps) {
+export function HomeCard({
+  home,
+  preferPhoto = false,
+  showLocation = true,
+  priority = false,
+}: HomeCardProps) {
   const photoUrl = preferPhoto ? home.photos?.[0] : null;
 
   return (
@@ -54,6 +60,7 @@ export function HomeCard({ home, preferPhoto = false, showLocation = true }: Hom
             src={photoUrl}
             alt={`Home in ${home.city}`}
             fill
+            priority={priority}
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             className="object-cover"
           />

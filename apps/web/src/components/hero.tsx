@@ -8,23 +8,26 @@ const trustBadges = [
   '4.9 average host rating',
 ];
 
-const heroImageUrl = process.env.NEXT_PUBLIC_HERO_IMAGE_URL ?? null;
+const DEFAULT_HERO_IMAGE_URL =
+  'https://ftpbpwydhyollunz.public.blob.vercel-storage.com/home-samples/japanese/ChatGPT-Image-Apr-26-2026-05_13_04-PM-1-cc64784a.webp';
+
+const heroImageUrl = process.env.NEXT_PUBLIC_HERO_IMAGE_URL ?? DEFAULT_HERO_IMAGE_URL;
 
 export function Hero() {
   return (
     <section className="mx-auto w-full max-w-6xl px-6 py-16 md:px-10 md:py-24">
       <div className="relative overflow-hidden rounded-3xl border border-border/40 bg-card">
         <div className="absolute inset-0 scale-105 overflow-hidden">
-          {heroImageUrl && (
-            <Image
-              src={heroImageUrl}
-              alt=""
-              fill
-              priority
-              sizes="(max-width: 768px) 100vw, 1152px"
-              className="object-cover blur-[1px] scale-105"
-            />
-          )}
+          <Image
+            src={heroImageUrl}
+            alt=""
+            fill
+            priority
+            loading="eager"
+            fetchPriority="high"
+            sizes="(max-width: 768px) 100vw, 1152px"
+            className="object-cover blur-[1px] scale-105"
+          />
         </div>
         <div className="absolute inset-0 bg-linear-to-b from-black/45 via-black/35 to-black/60" />
         <div className="absolute inset-x-0 top-0 h-40 bg-linear-to-b from-white/15 to-transparent" />
