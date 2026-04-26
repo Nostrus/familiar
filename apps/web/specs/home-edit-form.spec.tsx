@@ -22,8 +22,8 @@ jest.mock('next/image', () => ({
 }));
 
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import * as editActions from '../src/app/homes/[id]/edit-actions';
 import { HomeEditForm } from '../src/app/homes/[id]/components/home-edit-form';
+import * as editActions from '../src/app/homes/[id]/edit-actions';
 
 const mockUploadHomePhoto = editActions.uploadHomePhoto as jest.Mock;
 

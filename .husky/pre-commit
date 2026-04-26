@@ -1,1 +1,10 @@
-npm test
+STAGED_PRETTIER_FILES=$(git diff --cached --name-only --diff-filter=ACMR | grep -E '\.(js|jsx|ts|tsx|mjs|cjs|json|md|css|scss|yml|yaml)$' || true)
+
+if [ -n "$STAGED_PRETTIER_FILES" ]; then
+	echo "$STAGED_PRETTIER_FILES" | while IFS= read -r file; do
+		pnpm prettier --write "$file"
+		git add "$file"
+	done
+fi
+
+pnpm test
