@@ -45,6 +45,12 @@ export function HomeEditForm({ home }: Props) {
     if (files.length === 0) {
       return;
     }
+    const oversized = files.filter((f) => f.size > 5 * 1024 * 1024);
+    if (oversized.length > 0) {
+      setError(`Each image must be 5 MB or smaller.`);
+      if (fileRef.current) fileRef.current.value = '';
+      return;
+    }
     setUploadPending(true);
     setError(null);
     try {
