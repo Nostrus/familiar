@@ -19,6 +19,9 @@ type HomeCardProps = {
   priority?: boolean;
 };
 
+const homeCardImageSizes =
+  '(max-width: 639px) calc(100vw - 3rem), (max-width: 767px) calc((100vw - 4.5rem) / 2), (max-width: 1023px) calc((100vw - 6.5rem) / 2), (max-width: 1152px) calc((100vw - 8rem) / 3), 21.375rem';
+
 export function HomeCard({
   home,
   preferPhoto = false,
@@ -61,7 +64,7 @@ export function HomeCard({
             alt={`Home in ${home.city}`}
             fill
             priority={priority}
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            sizes={homeCardImageSizes}
             className="object-cover"
           />
         ) : (
