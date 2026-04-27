@@ -14,6 +14,8 @@ type ViewerRequest = {
 type PendingOwnerRequest = {
   id: number;
   requesterId: string;
+  requesterFirstName: string | null;
+  requesterLastName: string | null;
   status: 'pending' | 'approved' | 'rejected';
   requestedStartDate: string;
   requestedEndDate: string;
@@ -25,7 +27,8 @@ type HomeStayRequestsProps = {
   isOwner: boolean;
   canReceiveRequests: boolean;
   viewerRequest: ViewerRequest | null;
-  pendingRequestsForOwner: PendingOwnerRequest[];
+  requestsForOwner: PendingOwnerRequest[];
+  today: string;
 };
 
 function formatStatus(status: ViewerRequest['status']) {
@@ -47,49 +50,69 @@ export function HomeStayRequests({
   isOwner,
   canReceiveRequests,
   viewerRequest,
-  pendingRequestsForOwner,
+  requestsForOwner,
+  today,
 }: HomeStayRequestsProps) {
   if (isOwner) {
     return (
       <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
         <h2 className="text-xl font-semibold text-slate-900">Incoming stay requests</h2>
-        {pendingRequestsForOwner.length === 0 ? (
-          <p className="mt-2 text-sm text-slate-500">No pending requests right now.</p>
+        {requestsForOwner.length === 0 ? (
+          <p className="mt-2 text-sm text-slate-500">No requests yet.</p>
         ) : (
           <ul className="mt-4 space-y-3">
-            {pendingRequestsForOwner.map((request) => (
+            {requestsForOwner.map((request) => (
               <li
                 key={request.id}
                 className="flex flex-col gap-3 rounded-xl border border-slate-200 px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
               >
                 <div>
-                  <p className="text-sm font-medium text-slate-800">{request.requesterId}</p>
+                  <p className="text-sm font-medium text-slate-800">
+                    {request.requesterFirstName || request.requesterLastName
+                      ? [request.requesterFirstName, request.requesterLastName]
+                          .filter(Boolean)
+                          .join(' ')
+                      : request.requesterId}
+                  </p>
                   <p className="text-xs text-slate-500">
                     Requested dates: {formatDate(request.requestedStartDate)} -{' '}
                     {formatDate(request.requestedEndDate)}
                   </p>
                   <p className="text-xs text-slate-500">
-                    Requested {new Date(request.createdAt).toLocaleDateString('en-US')}
+                    Requested{' '}
+                    {new Date(request.createdAt).toLocaleDateString('en-US', {
+                      month: 'short',
+                      day: 'numeric',
+                      year: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })}
                   </p>
                 </div>
-                <div className="flex items-center gap-2">
-                  <form action={updateStayRequestStatus}>
-                    <input type="hidden" name="homeId" value={homeId} />
-                    <input type="hidden" name="requestId" value={request.id} />
-                    <input type="hidden" name="status" value="approved" />
-                    <Button type="submit" size="sm">
-                      Approve
-                    </Button>
-                  </form>
-                  <form action={updateStayRequestStatus}>
-                    <input type="hidden" name="homeId" value={homeId} />
-                    <input type="hidden" name="requestId" value={request.id} />
-                    <input type="hidden" name="status" value="rejected" />
-                    <Button type="submit" size="sm" variant="outline">
-                      Reject
-                    </Button>
-                  </form>
-                </div>
+                {request.status === 'pending' ? (
+                  <div className="flex items-center gap-2">
+                    <form action={updateStayRequestStatus}>
+                      <input type="hidden" name="homeId" value={homeId} />
+                      <input type="hidden" name="requestId" value={request.id} />
+                      <input type="hidden" name="status" value="approved" />
+                      <Button type="submit" size="sm">
+                        Approve
+                      </Button>
+                    </form>
+                    <form action={updateStayRequestStatus}>
+                      <input type="hidden" name="homeId" value={homeId} />
+                      <input type="hidden" name="requestId" value={request.id} />
+                      <input type="hidden" name="status" value="rejected" />
+                      <Button type="submit" size="sm" variant="outline">
+                        Reject
+                      </Button>
+                    </form>
+                  </div>
+                ) : (
+                  <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-700">
+                    Approved
+                  </span>
+                )}
               </li>
             ))}
           </ul>
@@ -135,6 +158,7 @@ export function HomeStayRequests({
                   type="date"
                   name="requestedStartDate"
                   required
+                  min={today}
                   className="h-10 rounded-xl border border-slate-300 px-3 text-sm outline-none focus:border-blue-400"
                 />
               </label>
@@ -144,6 +168,7 @@ export function HomeStayRequests({
                   type="date"
                   name="requestedEndDate"
                   required
+                  min={today}
                   className="h-10 rounded-xl border border-slate-300 px-3 text-sm outline-none focus:border-blue-400"
                 />
               </label>

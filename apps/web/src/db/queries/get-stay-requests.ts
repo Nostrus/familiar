@@ -1,7 +1,7 @@
 import 'server-only';
 
 import { db } from '@/db';
-import { homeStayRequests, homes } from '@/db/schema';
+import { clerkUsers, homeStayRequests, homes } from '@/db/schema';
 import { and, desc, eq, type SQL } from 'drizzle-orm';
 
 type StayRequestStatus = 'pending' | 'approved' | 'rejected';
@@ -47,16 +47,24 @@ export async function getStayRequests({
   const whereClause =
     filters.length === 0 ? undefined : filters.length === 1 ? filters[0] : and(...filters);
 
-  const query = db.select(stayRequestBaseSelect).from(homeStayRequests).$dynamic();
+  let query = db
+    .select({
+      ...stayRequestBaseSelect,
+      requesterFirstName: clerkUsers.firstName,
+      requesterLastName: clerkUsers.lastName,
+    })
+    .from(homeStayRequests)
+    .leftJoin(clerkUsers, eq(clerkUsers.clerkUserId, homeStayRequests.requesterId))
+    .$dynamic();
 
   if (whereClause) {
-    query.where(whereClause);
+    query = query.where(whereClause);
   }
 
-  query.orderBy(desc(homeStayRequests.createdAt));
+  query = query.orderBy(desc(homeStayRequests.createdAt));
 
   if (typeof limit === 'number') {
-    query.limit(limit);
+    query = query.limit(limit);
   }
 
   return query;
@@ -83,7 +91,7 @@ export async function getStayRequestsWithHome({
   const whereClause =
     filters.length === 0 ? undefined : filters.length === 1 ? filters[0] : and(...filters);
 
-  const query = db
+  let query = db
     .select({
       ...stayRequestBaseSelect,
       homeDescription: homes.description,
@@ -95,13 +103,13 @@ export async function getStayRequestsWithHome({
     .$dynamic();
 
   if (whereClause) {
-    query.where(whereClause);
+    query = query.where(whereClause);
   }
 
-  query.orderBy(desc(homeStayRequests.createdAt));
+  query = query.orderBy(desc(homeStayRequests.createdAt));
 
   if (typeof limit === 'number') {
-    query.limit(limit);
+    query = query.limit(limit);
   }
 
   return query;

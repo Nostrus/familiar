@@ -39,9 +39,7 @@ export const getHome = cache(async (id: number, viewerClerkUserId?: string) => {
         .limit(1)
     : [];
 
-  const pendingRequestsForOwner = isOwner
-    ? await getStayRequests({ homeId: id, status: 'pending' })
-    : [];
+  const requestsForOwner = isOwner ? await getStayRequests({ homeId: id }) : [];
 
   const favorite = viewerClerkUserId
     ? await db
@@ -56,6 +54,6 @@ export const getHome = cache(async (id: number, viewerClerkUserId?: string) => {
     availability,
     isFavorited: !!favorite[0],
     viewerRequest: viewerRequest[0] ?? null,
-    pendingRequestsForOwner,
+    requestsForOwner,
   };
 });

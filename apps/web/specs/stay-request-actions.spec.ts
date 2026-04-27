@@ -51,6 +51,19 @@ describe('createStayRequest', () => {
     ).rejects.toThrow('signed in');
   });
 
+  it('throws when start date is in the past', async () => {
+    mockAuth.mockResolvedValue({ userId: 'u1' });
+    await expect(
+      createStayRequest(
+        makeFormData({
+          homeId: '1',
+          requestedStartDate: '2020-01-01',
+          requestedEndDate: '2020-01-10',
+        }),
+      ),
+    ).rejects.toThrow('Start date cannot be in the past');
+  });
+
   it('throws when start date is after end date', async () => {
     mockAuth.mockResolvedValue({ userId: 'u1' });
 
