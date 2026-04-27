@@ -121,7 +121,8 @@ export default async function HomePage(props: { params: Promise<{ id: string }> 
           isOwner={isOwner}
           canReceiveRequests={canReceiveRequests}
           viewerRequest={home.viewerRequest}
-          pendingRequestsForOwner={home.pendingRequestsForOwner}
+          requestsForOwner={home.requestsForOwner}
+          today={new Date().toISOString().split('T')[0]}
         />
         <HomeAmenities amenities={home.amenities} />
         <HomeAvailability availability={home.availability} />

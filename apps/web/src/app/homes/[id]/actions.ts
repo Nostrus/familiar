@@ -37,6 +37,13 @@ export async function createStayRequest(formData: FormData) {
   const requestedStartDate = parseDate(formData.get('requestedStartDate'));
   const requestedEndDate = parseDate(formData.get('requestedEndDate'));
 
+  const todayStr = new Date().toISOString().split('T')[0];
+  if (requestedStartDate < todayStr) {
+    throw new Error('Start date cannot be in the past.');
+  }
+  if (requestedEndDate < todayStr) {
+    throw new Error('End date cannot be in the past.');
+  }
   if (requestedStartDate > requestedEndDate) {
     throw new Error('Requested start date must be before end date.');
   }
@@ -80,6 +87,7 @@ export async function createStayRequest(formData: FormData) {
   }
 
   revalidatePath(`/homes/${homeId}`);
+  revalidatePath('/my-requests');
 }
 
 export async function updateStayRequestStatus(formData: FormData) {
