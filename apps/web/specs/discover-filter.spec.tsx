@@ -41,6 +41,16 @@ describe('DiscoverFilter', () => {
     }
   });
 
+  it('closes city dropdown when clicking outside', () => {
+    render(<DiscoverFilter allCities={allCities} />);
+    fireEvent.click(screen.getByText('All cities'));
+    expect(screen.getByText('Paris')).toBeTruthy();
+
+    fireEvent.mouseDown(document.body);
+
+    expect(screen.queryByText('Paris')).toBeNull();
+  });
+
   it('does not call router.push when a city is selected until apply is clicked', () => {
     render(<DiscoverFilter allCities={allCities} />);
     fireEvent.click(screen.getByText('All cities'));
