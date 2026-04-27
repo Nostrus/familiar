@@ -9,8 +9,8 @@ test('discover page loads and shows city sections', async ({ page }) => {
 test('discover filter bar is visible', async ({ page }) => {
   await page.goto('/discover');
 
-  await expect(page.getByText('Date range')).toBeVisible();
-  await expect(page.getByText('Cities')).toBeVisible();
+  await expect(page.getByText('Date range', { exact: true })).toBeVisible();
+  await expect(page.getByText('Cities', { exact: true })).toBeVisible();
   await expect(page.getByLabel('Number of guests')).toBeVisible();
   await expect(page.getByRole('button', { name: 'Apply filters' })).toBeVisible();
 });

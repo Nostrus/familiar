@@ -21,7 +21,7 @@ import { auth } from '@clerk/nextjs/server';
 import { db } from '@org/db';
 import { createStayRequest } from '../src/app/homes/[id]/actions';
 
-const mockAuth = auth as jest.Mock;
+const mockAuth = auth as unknown as jest.Mock;
 const mockDbSelect = db.select as jest.Mock;
 const mockDbInsert = db.insert as jest.Mock;
 
