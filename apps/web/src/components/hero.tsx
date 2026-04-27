@@ -1,6 +1,4 @@
-import { Button } from '@/components/ui/button';
 import Image from 'next/image';
-import Link from 'next/link';
 
 const trustBadges = [
   '50,000+ nights swapped',
@@ -41,15 +39,6 @@ export function Hero() {
             The best way to travel is to live like you already belong there. Swap homes with trusted
             members, skip hotel prices, and stay in real neighborhoods.
           </p>
-
-          <div className="flex flex-wrap items-center justify-center gap-3">
-            <Button asChild size="lg" className="px-8">
-              <Link href="#">Start Swapping</Link>
-            </Button>
-            <Button asChild size="lg" variant="secondary" className="px-8">
-              <Link href="#how-it-works">See How It Works</Link>
-            </Button>
-          </div>
         </div>
       </div>
 

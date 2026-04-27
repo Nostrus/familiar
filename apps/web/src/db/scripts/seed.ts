@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import { eq, sql } from 'drizzle-orm';
-import { db } from './index';
-import { cities, clerkUsers, homeAvailability, homes } from './schema';
+import { db } from '../index';
+import { cities, clerkUsers, homeAvailability, homes } from '../schema';
 
 const popularDestinations = [
   {
