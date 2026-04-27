@@ -31,7 +31,7 @@ Location:
 
 - `apps/web/src/db/schema.ts` - table definitions (`cities`, `clerk_users`)
 - `apps/web/src/db/queries` - DB queries
-- `apps/web/src/db/seed.ts` - seed data for DB
+- `apps/web/src/db/scripts/seed.ts` - seed data for DB
 
 Run DB commands from `apps/web`:
 
@@ -79,7 +79,9 @@ The homepage (`apps/web/src/app/page.tsx`) renders three sections:
 ## Project Structure
 
 - `apps/web` — Next.js marketing site and dashboard
+- `apps/web/specs` — Jest unit/integration tests for app logic and components
 - `apps/web-e2e` — Playwright e2e tests
+- `apps/web-e2e/src` — Playwright spec files executed by the e2e target
 
 ## Versioning and releasing
 

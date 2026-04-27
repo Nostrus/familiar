@@ -10,9 +10,9 @@
     "db:migrate": "drizzle-kit migrate --config drizzle.config.mjs",
     "db:push": "drizzle-kit push --config drizzle.config.mjs",
     "db:pull": "drizzle-kit pull --config drizzle.config.mjs",
-    "db:seed": "tsx src/db/seed.ts",
-    "db:backfill:clerk-users": "tsx src/db/backfill-clerk-users.ts",
-    "db:seed:photos": "tsx src/db/seed-home-photos.ts",
+    "db:seed": "tsx src/db/scripts/seed.ts",
+    "db:backfill:clerk-users": "tsx src/db/scripts/backfill-clerk-users.ts",
+    "db:seed:photos": "tsx src/db/scripts/seed-home-photos.ts",
     "db:studio": "drizzle-kit studio --config drizzle.config.mjs"
   },
   "dependencies": {

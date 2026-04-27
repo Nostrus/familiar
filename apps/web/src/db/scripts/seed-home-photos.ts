@@ -3,8 +3,8 @@ import dotenv from 'dotenv';
 import { asc, eq } from 'drizzle-orm';
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { db } from './index';
-import { homes } from './schema';
+import { db } from '../index';
+import { homes } from '../schema';
 
 dotenv.config({ path: '.env.local' });
 dotenv.config();

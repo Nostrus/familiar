@@ -2,8 +2,8 @@ import 'dotenv/config';
 
 import { createClerkClient } from '@clerk/nextjs/server';
 import { sql } from 'drizzle-orm';
-import { db } from './index';
-import { clerkUsers } from './schema';
+import { db } from '../index';
+import { clerkUsers } from '../schema';
 
 const clerkSecretKey = process.env.CLERK_SECRET_KEY;
 
