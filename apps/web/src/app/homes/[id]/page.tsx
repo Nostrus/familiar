@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { getHome } from '@/db/queries/get-home';
+import { getHome } from '@org/db';
 import { Show } from '@clerk/nextjs';
 import { auth } from '@clerk/nextjs/server';
 import { Bath, Bed, Heart, Users } from 'lucide-react';

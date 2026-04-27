@@ -5,19 +5,12 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
-    "db:generate": "drizzle-kit generate --config drizzle.config.mjs",
-    "db:migrate": "drizzle-kit migrate --config drizzle.config.mjs",
-    "db:push": "drizzle-kit push --config drizzle.config.mjs",
-    "db:pull": "drizzle-kit pull --config drizzle.config.mjs",
-    "db:seed": "tsx src/db/scripts/seed.ts",
-    "db:backfill:clerk-users": "tsx src/db/scripts/backfill-clerk-users.ts",
-    "db:seed:photos": "tsx src/db/scripts/seed-home-photos.ts",
-    "db:studio": "drizzle-kit studio --config drizzle.config.mjs"
+    "start": "next start"
   },
   "dependencies": {
     "@clerk/nextjs": "^7.2.3",
     "@neondatabase/serverless": "^1.1.0",
+    "@org/db": "workspace:^",
     "@vercel/blob": "^2.3.3",
     "@vercel/speed-insights": "^2.0.0",
     "class-variance-authority": "^0.7.1",

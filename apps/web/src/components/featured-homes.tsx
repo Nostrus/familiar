@@ -1,5 +1,5 @@
 import { HomeCard } from '@/components/home-card';
-import { getFeaturedHomes } from '@/db/queries/get-featured-homes';
+import { getFeaturedHomes } from '@org/db';
 
 export async function FeaturedHomes() {
   const homes = await getFeaturedHomes();

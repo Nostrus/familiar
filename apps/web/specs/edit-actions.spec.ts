@@ -6,16 +6,17 @@
 jest.mock('@clerk/nextjs/server', () => ({ auth: jest.fn() }));
 jest.mock('@vercel/blob', () => ({ put: jest.fn() }));
 jest.mock('next/cache', () => ({ revalidatePath: jest.fn() }));
-jest.mock('../src/db', () => ({
+jest.mock('@org/db', () => ({
   db: { select: jest.fn(), update: jest.fn() },
+  homes: { id: 'id', ownerId: 'owner_id', photos: 'photos' },
 }));
 
 import { auth } from '@clerk/nextjs/server';
+import { db } from '@org/db';
 import { put } from '@vercel/blob';
 import { updateHome, uploadHomePhoto } from '../src/app/homes/[id]/edit-actions';
-import { db } from '../src/db';
 
-const mockAuth = auth as jest.Mock;
+const mockAuth = auth as unknown as jest.Mock;
 const mockPut = put as jest.Mock;
 const mockDbSelect = db.select as jest.Mock;
 const mockDbUpdate = db.update as jest.Mock;

@@ -1,5 +1,5 @@
-import { db } from '@/db';
-import { homes } from '@/db/schema';
+import { db } from '@org/db';
+import { homes } from '@org/db';
 import { auth } from '@clerk/nextjs/server';
 import { eq } from 'drizzle-orm';
 import Link from 'next/link';

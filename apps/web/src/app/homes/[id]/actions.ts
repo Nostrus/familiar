@@ -1,7 +1,7 @@
 'use server';
 
-import { db } from '@/db';
-import { homeFavorites, homeStayRequests, homes } from '@/db/schema';
+import { db } from '@org/db';
+import { homeFavorites, homeStayRequests, homes } from '@org/db';
 import { ensureClerkUser } from '@/lib/ensure-clerk-user';
 import { auth } from '@clerk/nextjs/server';
 import { and, eq } from 'drizzle-orm';

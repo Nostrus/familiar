@@ -29,25 +29,25 @@ The web app uses Drizzle ORM with Neon PostgreSQL.
 
 Location:
 
-- `apps/web/src/db/schema.ts` - table definitions (`cities`, `clerk_users`)
-- `apps/web/src/db/queries` - DB queries
-- `apps/web/src/db/scripts/seed.ts` - seed data for DB
+- `packages/db/src/schema.ts` - table definitions (`cities`, `clerk_users`)
+- `packages/db/src/queries` - DB queries
+- `packages/db/src/scripts/seed.ts` - seed data for DB
+- `packages/db/drizzle` - migration files
 
-Run DB commands from `apps/web`:
+Run DB commands from the repo root (delegates to `@org/db`):
 
 ```sh
-cd apps/web
 npm run db:generate  # Generate migration files from schema
 npm run db:migrate   # Apply migrations
 npm run db:seed      # Seed popular destination cities
 npm run db:studio    # Open Drizzle Studio
 ```
 
-Required environment variables in `apps/web/.env`:
+Required environment variables in `packages/db/.env.local`:
 
 ```env
 DATABASE_URL=your_neon_connection_string
-CLERK_WEBHOOK_SIGNING_SECRET=your_clerk_webhook_signing_secret
+CLERK_SECRET_KEY=your_clerk_secret_key
 ```
 
 ## Clerk Webhook Sync

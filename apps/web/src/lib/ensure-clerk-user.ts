@@ -1,7 +1,7 @@
 import 'server-only';
 
-import { db } from '@/db';
-import { clerkUsers } from '@/db/schema';
+import { db } from '@org/db';
+import { clerkUsers } from '@org/db';
 
 type EnsureClerkUserInput = {
   clerkUserId: string | null | undefined;

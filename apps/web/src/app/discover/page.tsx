@@ -1,7 +1,7 @@
 import { DiscoverFilter } from '@/components/discover-filter';
 import { HomeCard } from '@/components/home-card';
-import { getCities } from '@/db/queries/get-cities';
-import { getHomesByCity } from '@/db/queries/get-homes-by-city';
+import { getCities } from '@org/db';
+import { getHomesByCity } from '@org/db';
 import Link from 'next/link';
 import { Suspense } from 'react';
 

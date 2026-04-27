@@ -1,5 +1,5 @@
 import { HomeCard } from '@/components/home-card';
-import { getMyFavoriteHomes } from '@/db/queries/get-my-favorite-homes';
+import { getMyFavoriteHomes } from '@org/db';
 import { auth } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
 

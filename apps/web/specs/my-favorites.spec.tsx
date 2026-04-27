@@ -4,7 +4,7 @@ jest.mock('@clerk/nextjs/server', () => ({
   auth: jest.fn(async () => ({ userId: 'user_123' })),
 }));
 
-jest.mock('../src/db/queries/get-my-favorite-homes', () => ({
+jest.mock('@org/db', () => ({
   getMyFavoriteHomes: jest.fn(async () => [
     {
       id: 11,

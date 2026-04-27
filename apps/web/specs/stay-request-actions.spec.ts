@@ -6,13 +6,20 @@
 jest.mock('@clerk/nextjs/server', () => ({ auth: jest.fn() }));
 jest.mock('../src/lib/ensure-clerk-user', () => ({ ensureClerkUser: jest.fn() }));
 jest.mock('next/cache', () => ({ revalidatePath: jest.fn() }));
-jest.mock('../src/db', () => ({
+jest.mock('@org/db', () => ({
   db: { select: jest.fn(), insert: jest.fn() },
+  homes: { id: 'id', ownerId: 'owner_id' },
+  homeStayRequests: {
+    id: 'id',
+    homeId: 'home_id',
+    requesterId: 'requester_id',
+    status: 'status',
+  },
 }));
 
 import { auth } from '@clerk/nextjs/server';
+import { db } from '@org/db';
 import { createStayRequest } from '../src/app/homes/[id]/actions';
-import { db } from '../src/db';
 
 const mockAuth = auth as jest.Mock;
 const mockDbSelect = db.select as jest.Mock;
