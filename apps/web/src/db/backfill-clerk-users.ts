@@ -1,6 +1,6 @@
 import 'dotenv/config';
 
-import { createClerkClient } from '@clerk/backend';
+import { createClerkClient } from '@clerk/nextjs/server';
 import { sql } from 'drizzle-orm';
 import { db } from './index';
 import { clerkUsers } from './schema';
