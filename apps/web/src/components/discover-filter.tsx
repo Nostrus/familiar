@@ -41,6 +41,28 @@ export function DiscoverFilter({ allCities }: Props) {
     setDraftGuests(guestsParam);
   }, [selectedCities, dateFromParam, dateToParam, guestsParam]);
 
+  useEffect(() => {
+    if (!cityOpen) {
+      return;
+    }
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (!cityRef.current) {
+        return;
+      }
+
+      if (!cityRef.current.contains(event.target as Node)) {
+        setCityOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [cityOpen]);
+
   const draftDateRange = useMemo<DateRange | undefined>(() => {
     if (!draftDateFrom && !draftDateTo) {
       return undefined;
