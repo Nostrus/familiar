@@ -1,8 +1,9 @@
-jest.mock('../src/db', () => ({
+jest.mock('@org/db', () => ({
   db: { insert: jest.fn() },
+  clerkUsers: { clerkUserId: 'clerk_user_id' },
 }));
 
-import { db } from '../src/db';
+import { db } from '@org/db';
 import { ensureClerkUser } from '../src/lib/ensure-clerk-user';
 
 const mockDbInsert = db.insert as jest.Mock;

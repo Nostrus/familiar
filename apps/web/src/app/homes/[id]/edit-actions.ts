@@ -1,7 +1,7 @@
 'use server';
 
-import { db } from '@/db';
-import { homes } from '@/db/schema';
+import { db } from '@org/db';
+import { homes } from '@org/db';
 import { auth } from '@clerk/nextjs/server';
 import { put } from '@vercel/blob';
 import { eq } from 'drizzle-orm';

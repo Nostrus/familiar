@@ -1,6 +1,6 @@
 import { cancelMyStayRequest } from '@/app/homes/[id]/actions';
 import { Button } from '@/components/ui/button';
-import { getMyStayRequests } from '@/db/queries/get-my-stay-requests';
+import { getMyStayRequests } from '@org/db';
 import { auth } from '@clerk/nextjs/server';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';

@@ -1,7 +1,7 @@
 import 'server-only';
 
-import { db } from '@/db';
-import { homeAvailability, homeFavorites, homeStayRequests, homes } from '@/db/schema';
+import { db } from '../client';
+import { homeAvailability, homeFavorites, homeStayRequests, homes } from '../schema';
 import { and, desc, eq } from 'drizzle-orm';
 import { cache } from 'react';
 import { getStayRequests } from './get-stay-requests';

@@ -1,7 +1,7 @@
 import 'server-only';
 
-import { db } from '@/db';
-import { cities } from '@/db/schema';
+import { db } from '../client';
+import { cities } from '../schema';
 import { desc } from 'drizzle-orm';
 import { cache } from 'react';
 

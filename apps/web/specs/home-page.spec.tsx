@@ -8,7 +8,7 @@ jest.mock('@clerk/nextjs', () => ({
   Show: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 
-jest.mock('../src/db/queries/get-home', () => ({
+jest.mock('@org/db', () => ({
   getHome: jest.fn(async () => ({
     id: 7,
     ownerId: 'owner_456',

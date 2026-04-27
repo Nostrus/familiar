@@ -1,5 +1,5 @@
-import { db } from '@/db';
-import { clerkUsers } from '@/db/schema';
+import { db } from '@org/db';
+import { clerkUsers } from '@org/db';
 import { verifyWebhook } from '@clerk/nextjs/webhooks';
 import { eq } from 'drizzle-orm';
 import { NextRequest } from 'next/server';

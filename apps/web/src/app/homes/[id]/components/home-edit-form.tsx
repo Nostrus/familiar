@@ -1,6 +1,6 @@
 'use client';
 
-import { Home } from '@/db/schema';
+import { Home } from '@org/db';
 import { AMENITIES, AmenityKey } from '@/lib/amenities';
 import { X } from 'lucide-react';
 import Image from 'next/image';

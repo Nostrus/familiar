@@ -1,7 +1,7 @@
 import 'server-only';
 
-import { db } from '@/db';
-import { homeFavorites, homes } from '@/db/schema';
+import { db } from '../client';
+import { homeFavorites, homes } from '../schema';
 import { desc, eq } from 'drizzle-orm';
 import { cache } from 'react';
 

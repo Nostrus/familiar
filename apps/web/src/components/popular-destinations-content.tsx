@@ -1,5 +1,5 @@
 import { BubbleCard } from '@/components/bubble-card';
-import { getCities } from '@/db/queries/get-cities';
+import { getCities } from '@org/db';
 
 export async function PopularDestinationsContent() {
   const destinations = await getCities({ limit: 6 });

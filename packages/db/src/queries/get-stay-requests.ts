@@ -1,7 +1,7 @@
 import 'server-only';
 
-import { db } from '@/db';
-import { clerkUsers, homeStayRequests, homes } from '@/db/schema';
+import { db } from '../client';
+import { clerkUsers, homeStayRequests, homes } from '../schema';
 import { and, desc, eq, type SQL } from 'drizzle-orm';
 
 type StayRequestStatus = 'pending' | 'approved' | 'rejected';
