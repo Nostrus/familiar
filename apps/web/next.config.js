@@ -9,7 +9,9 @@ const nextConfig = {
   // Use this to set Nx-specific options
   // See: https://nx.dev/recipes/next/next-config-setup
   nx: {},
+  transpilePackages: ['@org/db'],
   experimental: {
+    externalDir: true,
     serverActions: {
       bodySizeLimit: '15mb',
     },
