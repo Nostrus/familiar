@@ -18,22 +18,43 @@ export async function ensureClerkUser({
 }: EnsureClerkUserInput) {
   if (!clerkUserId) return;
 
-  await db
-    .insert(clerkUsers)
-    .values({
-      clerkUserId,
-      firstName: firstName ?? null,
-      lastName: lastName ?? null,
-      email: email ?? null,
-      updatedAt: new Date(),
-    })
-    .onConflictDoUpdate({
-      target: clerkUsers.clerkUserId,
-      set: {
-        firstName: firstName ?? null,
-        lastName: lastName ?? null,
-        email: email ?? null,
-        updatedAt: new Date(),
-      },
-    });
+  const values: {
+    clerkUserId: string;
+    updatedAt: Date;
+    firstName?: string | null;
+    lastName?: string | null;
+    email?: string | null;
+  } = {
+    clerkUserId,
+    updatedAt: new Date(),
+  };
+
+  const conflictSet: {
+    updatedAt: Date;
+    firstName?: string | null;
+    lastName?: string | null;
+    email?: string | null;
+  } = {
+    updatedAt: new Date(),
+  };
+
+  if (firstName !== undefined) {
+    values.firstName = firstName ?? null;
+    conflictSet.firstName = firstName ?? null;
+  }
+
+  if (lastName !== undefined) {
+    values.lastName = lastName ?? null;
+    conflictSet.lastName = lastName ?? null;
+  }
+
+  if (email !== undefined) {
+    values.email = email ?? null;
+    conflictSet.email = email ?? null;
+  }
+
+  await db.insert(clerkUsers).values(values).onConflictDoUpdate({
+    target: clerkUsers.clerkUserId,
+    set: conflictSet,
+  });
 }
