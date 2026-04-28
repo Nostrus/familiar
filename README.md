@@ -50,6 +50,14 @@ DATABASE_URL=your_neon_connection_string
 CLERK_SECRET_KEY=your_clerk_secret_key
 ```
 
+### Vercel Monorepo Notes
+
+To avoid workspace dependency resolution issues for `@org/db` on Vercel:
+
+- Keep installs workspace-aware from the repository root (`pnpm install`).
+- Build using Nx from the root (for example: `pnpm nx run @org/web:build`).
+- Keep `apps/web/next.config.js` configured for monorepo package transpilation (`transpilePackages` with `@org/db`) and external workspace directories (`experimental.externalDir`).
+
 ## Clerk Webhook Sync
 
 Clerk user lifecycle events are synced to the database at:
