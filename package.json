@@ -21,13 +21,16 @@
   },
   "private": true,
   "devDependencies": {
+    "@babel/runtime": "~7.27.6",
     "@commitlint/cli": "^20.5.0",
     "@commitlint/config-conventional": "^20.5.0",
     "@eslint/js": "^9.24.0",
+    "@expo/cli": "~54.0.16",
     "@next/eslint-plugin-next": "^16.1.6",
     "@nx/devkit": "22.6.5",
     "@nx/eslint": "^22.6.5",
     "@nx/eslint-plugin": "^22.6.5",
+    "@nx/expo": "22.6.5",
     "@nx/jest": "22.6.5",
     "@nx/js": "22.6.5",
     "@nx/playwright": "22.6.5",
@@ -38,12 +41,14 @@
     "@swc/helpers": "0.5.18",
     "@testing-library/dom": "10.4.0",
     "@testing-library/react": "16.3.0",
+    "@testing-library/react-native": "~13.2.0",
     "@types/jest": "^30.0.0",
     "@types/node": "20.19.9",
-    "@types/react": "^19.0.0",
+    "@types/react": "^19.1.0",
     "@types/react-dom": "^19.0.0",
     "autoprefixer": "10.4.13",
     "babel-jest": "^30.0.2",
+    "babel-preset-expo": "~54.0.7",
     "eslint": "^9.24.0",
     "eslint-config-next": "^16.1.6",
     "eslint-plugin-import": "2.31.0",
@@ -54,7 +59,10 @@
     "husky": "^9.1.7",
     "jest": "^30.0.2",
     "jest-environment-jsdom": "^30.0.2",
+    "jest-expo": "~54.0.13",
     "jest-util": "^30.0.2",
+    "metro-config": "~0.83.0",
+    "metro-resolver": "~0.83.0",
     "nx": "22.6.5",
     "postcss": "^8.5.10",
     "prettier": "^3.8.3",
@@ -66,10 +74,28 @@
     "typescript-eslint": "^8.58.2"
   },
   "dependencies": {
+    "@expo/metro-config": "~54.0.9",
+    "@expo/metro-runtime": "~6.1.2",
     "@nx/next": "^22.6.5",
+    "expo": "~54.0.0",
+    "expo-splash-screen": "~31.0.11",
+    "expo-status-bar": "~3.0.8",
+    "expo-system-ui": "~6.0.8",
     "next": "~16.1.6",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react": "19.1.0",
+    "react-test-renderer": "19.1.0",
+    "react-dom": "19.1.0",
+    "react-native": "0.81.5",
+    "react-native-svg": "15.12.1",
+    "react-native-svg-transformer": "~1.5.1",
+    "react-native-web": "~0.21.0"
+  },
+  "pnpm": {
+    "overrides": {
+      "react": "19.1.0",
+      "react-dom": "19.1.0",
+      "react-test-renderer": "19.1.0"
+    }
   },
   "packageManager": "pnpm@9.12.0"
 }

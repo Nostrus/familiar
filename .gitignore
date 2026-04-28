@@ -55,3 +55,18 @@ test-output
 # DB package local env
 packages/db/.env
 packages/db/.env.local
+
+# Expo
+node_modules/
+.expo/
+.yarn/
+dist/
+npm-debug.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+web-build/
+cache/
