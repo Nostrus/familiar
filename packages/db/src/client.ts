@@ -11,13 +11,37 @@ const packageRoot = path.resolve(path.dirname(currentFilePath), '..');
 dotenv.config({ path: path.join(packageRoot, '.env.local') });
 dotenv.config({ path: path.join(packageRoot, '.env') });
 
-const databaseUrl = process.env.DATABASE_URL;
+const createDb = (databaseUrl: string) => {
+  const sql = neon(databaseUrl);
+  return drizzle(sql, { schema });
+};
 
-if (!databaseUrl) {
-  throw new Error('DATABASE_URL is not set.');
+type Database = ReturnType<typeof createDb>;
+
+let database: Database | undefined;
+
+export function getDb(): Database {
+  if (database) {
+    return database;
+  }
+
+  const databaseUrl = process.env.DATABASE_URL;
+
+  if (!databaseUrl) {
+    throw new Error('DATABASE_URL is not set.');
+  }
+
+  database = createDb(databaseUrl);
+  return database;
 }
 
-const sql = neon(databaseUrl);
+export const db: Database = new Proxy({} as Database, {
+  get(_target, property, _receiver) {
+    const client = getDb();
+    const value = Reflect.get(client, property, client);
 
-export const db = drizzle(sql, { schema });
+    return typeof value === 'function' ? value.bind(client) : value;
+  },
+});
+
 export { schema };
