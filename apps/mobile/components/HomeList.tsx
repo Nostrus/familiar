@@ -22,7 +22,7 @@ export function HomeList({ homes, showScrollIndicator = false }: HomeListProps) 
       )}
       horizontal
       showsHorizontalScrollIndicator={showScrollIndicator}
-      contentContainerStyle={{ paddingVertical: 8, paddingRight: 12, overflow: 'visible' }}
+      contentContainerStyle={{ paddingVertical: 8, paddingRight: 12 }}
     />
   );
 }
