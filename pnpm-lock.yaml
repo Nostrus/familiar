@@ -181,6 +181,9 @@ importers:
 
   apps/mobile:
     dependencies:
+      '@org/theme':
+        specifier: workspace:^
+        version: link:../../packages/theme
       '@react-navigation/native':
         specifier: ^7.1.33
         version: 7.2.2(react-native@0.83.6(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.0))(react@19.2.0)
@@ -266,6 +269,9 @@ importers:
       '@org/db':
         specifier: workspace:^
         version: link:../../packages/db
+      '@org/theme':
+        specifier: workspace:^
+        version: link:../../packages/theme
       '@vercel/blob':
         specifier: ^2.3.3
         version: 2.3.3
@@ -356,6 +362,12 @@ importers:
       tsx:
         specifier: ^4.21.0
         version: 4.21.0
+
+  packages/theme:
+    devDependencies:
+      culori:
+        specifier: ^4.0.2
+        version: 4.0.2
 
 packages:
   '@0no-co/graphql.web@1.2.0':
@@ -2877,7 +2889,7 @@ packages:
       }
     peerDependencies:
       expo-font: '>=14.0.4'
-      react: '*'
+      react: 19.1.0
       react-native: '*'
 
   '@expo/ws-tunnel@1.0.6':
@@ -5527,7 +5539,7 @@ packages:
       }
     peerDependencies:
       '@types/react': '*'
-      react: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+      react: 19.1.0
     peerDependenciesMeta:
       '@types/react':
         optional: true
@@ -5930,7 +5942,7 @@ packages:
     peerDependencies:
       '@react-native-masked-view/masked-view': '>= 0.2.0'
       '@react-navigation/native': ^7.2.2
-      react: '>= 18.2.0'
+      react: 19.1.0
       react-native: '*'
       react-native-safe-area-context: '>= 4.0.0'
     peerDependenciesMeta:
@@ -5955,7 +5967,7 @@ packages:
         integrity: sha512-kem1Ko2BcbAjmbQIv66dNmr6EtfDut3QU0qjsVhMnLLhktwyXb6FzZYp8gTrUb6AvkAbaJoi+BF5Pl55pAUa5w==,
       }
     peerDependencies:
-      react: '>= 18.2.0'
+      react: 19.1.0
       react-native: '*'
 
   '@react-navigation/routers@7.5.3':
@@ -7040,9 +7052,9 @@ packages:
     engines: { node: '>=18' }
     peerDependencies:
       jest: '>=29.0.0'
-      react: '>=18.2.0'
+      react: 19.1.0
       react-native: '>=0.71'
-      react-test-renderer: '>=18.2.0'
+      react-test-renderer: 19.1.0
     peerDependenciesMeta:
       jest:
         optional: true
@@ -9854,6 +9866,13 @@ packages:
         integrity: sha512-z1HGKcYy2xA8AGQfwrn0PAy+PB7X/GSj3UVJW9qKyn43xWa+gl5nXmU4qqLMRzWVLFC8KusUX8T/0kCiOYpAIQ==,
       }
 
+  culori@4.0.2:
+    resolution:
+      {
+        integrity: sha512-1+BhOB8ahCn4O0cep0Sh2l9KCOfOdY+BXJnKMHFFzDEouSr/el18QwXEMRlOj9UY5nCeA8UN3a/82rUWRBeyBw==,
+      }
+    engines: { node: ^12.20.0 || ^14.13.1 || >=16.0.0 }
+
   damerau-levenshtein@1.0.8:
     resolution:
       {
@@ -11238,7 +11257,7 @@ packages:
     peerDependencies:
       expo: '*'
       expo-font: '*'
-      react: '*'
+      react: 19.1.0
       react-native: '*'
 
   expo-web-browser@55.0.14:
@@ -16661,7 +16680,7 @@ packages:
         integrity: sha512-NIXU/iT5+ORyCc7p0z2nnlkouYKX425vuU1OEm6bMMtWWR9yvb+Xg5AZmImTKoF9abxCPqrKC3rOZsKzUYgYZA==,
       }
     peerDependencies:
-      react: '*'
+      react: 19.1.0
       react-native: '*'
 
   react-native-reanimated@4.2.1:
@@ -27165,6 +27184,8 @@ snapshots:
       rrweb-cssom: 0.8.0
 
   csstype@3.2.3: {}
+
+  culori@4.0.2: {}
 
   damerau-levenshtein@1.0.8: {}
 

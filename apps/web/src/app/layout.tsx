@@ -19,7 +19,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <ClerkProvider>
       <html lang="en" className={cn('font-sans', nunitoSans.variable)}>
-        <body>
+        <body className="bg-background text-foreground">
           <header className="mx-auto flex w-full max-w-6xl items-center justify-between gap-6 px-6 py-4 md:px-10">
             <Link
               href="/"

@@ -87,9 +87,12 @@ The homepage (`apps/web/src/app/page.tsx`) renders three sections:
 ## Project Structure
 
 - `apps/web` — Next.js marketing site and dashboard
+- `apps/mobile` — Expo + React Native mobile app ([README](apps/mobile/README.md))
 - `apps/web/specs` — Jest unit/integration tests for app logic and components
 - `apps/web-e2e` — Playwright e2e tests
 - `apps/web-e2e/src` — Playwright spec files executed by the e2e target
+- `packages/theme` — Shared color system ([README](packages/theme/README.md))
+- `packages/db` — Drizzle ORM schema and queries
 
 ## Versioning and releasing
 
