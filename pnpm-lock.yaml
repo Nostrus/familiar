@@ -181,6 +181,9 @@ importers:
 
   apps/mobile:
     dependencies:
+      '@org/db':
+        specifier: workspace:^
+        version: link:../../packages/db
       '@org/theme':
         specifier: workspace:^
         version: link:../../packages/theme
@@ -2889,7 +2892,7 @@ packages:
       }
     peerDependencies:
       expo-font: '>=14.0.4'
-      react: 19.1.0
+      react: '*'
       react-native: '*'
 
   '@expo/ws-tunnel@1.0.6':
@@ -5539,7 +5542,7 @@ packages:
       }
     peerDependencies:
       '@types/react': '*'
-      react: 19.1.0
+      react: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
     peerDependenciesMeta:
       '@types/react':
         optional: true
@@ -5942,7 +5945,7 @@ packages:
     peerDependencies:
       '@react-native-masked-view/masked-view': '>= 0.2.0'
       '@react-navigation/native': ^7.2.2
-      react: 19.1.0
+      react: '>= 18.2.0'
       react-native: '*'
       react-native-safe-area-context: '>= 4.0.0'
     peerDependenciesMeta:
@@ -5967,7 +5970,7 @@ packages:
         integrity: sha512-kem1Ko2BcbAjmbQIv66dNmr6EtfDut3QU0qjsVhMnLLhktwyXb6FzZYp8gTrUb6AvkAbaJoi+BF5Pl55pAUa5w==,
       }
     peerDependencies:
-      react: 19.1.0
+      react: '>= 18.2.0'
       react-native: '*'
 
   '@react-navigation/routers@7.5.3':
@@ -7052,9 +7055,9 @@ packages:
     engines: { node: '>=18' }
     peerDependencies:
       jest: '>=29.0.0'
-      react: 19.1.0
+      react: '>=18.2.0'
       react-native: '>=0.71'
-      react-test-renderer: 19.1.0
+      react-test-renderer: '>=18.2.0'
     peerDependenciesMeta:
       jest:
         optional: true
@@ -11257,7 +11260,7 @@ packages:
     peerDependencies:
       expo: '*'
       expo-font: '*'
-      react: 19.1.0
+      react: '*'
       react-native: '*'
 
   expo-web-browser@55.0.14:
@@ -16680,7 +16683,7 @@ packages:
         integrity: sha512-NIXU/iT5+ORyCc7p0z2nnlkouYKX425vuU1OEm6bMMtWWR9yvb+Xg5AZmImTKoF9abxCPqrKC3rOZsKzUYgYZA==,
       }
     peerDependencies:
-      react: 19.1.0
+      react: '*'
       react-native: '*'
 
   react-native-reanimated@4.2.1:

@@ -7,9 +7,17 @@ const protectedRoutePatterns = [
   '/my-favorites(.*)',
 ];
 
+const publicApiRoutes = ['/api/featured-homes', '/api/cities', '/api/homes'];
+
 const isProtectedRoute = createRouteMatcher(protectedRoutePatterns);
+const isPublicApi = createRouteMatcher(publicApiRoutes);
 
 export default clerkMiddleware(async (auth, req) => {
+  // Skip Clerk auth entirely for public API routes
+  if (isPublicApi(req)) {
+    return;
+  }
+
   if (isProtectedRoute(req)) {
     await auth.protect();
   }
