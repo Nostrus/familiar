@@ -11,6 +11,7 @@
     "@clerk/nextjs": "^7.2.3",
     "@org/db": "workspace:^",
     "@org/theme": "workspace:^",
+    "@org/types": "workspace:^",
     "@vercel/blob": "^2.3.3",
     "@vercel/speed-insights": "^2.0.0",
     "class-variance-authority": "^0.7.1",

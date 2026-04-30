@@ -1,3 +1,4 @@
+import type { Home, HomesByCity } from '@org/types';
 import { useEffect, useState } from 'react';
 import { ScrollView, View } from 'react-native';
 import { HomeList } from '../../components/HomeList';
@@ -5,29 +6,9 @@ import { Text } from '../../components/Themed';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
-interface FeaturedHome {
-  id: number;
-  city: string;
-  country: string;
-  description: string;
-  bedrooms: number;
-  bathrooms: number;
-  maxGuests: number;
-  amenities: string[];
-  photos: string[];
-  imageUrl?: string;
-  title?: string;
-  location?: string;
-  price?: number;
-}
-
-interface HomesByCity {
-  [city: string]: FeaturedHome[];
-}
-
 export default function DiscoverScreen() {
-  const [homesByCity, setHomesByCity] = useState<HomesByCity>({});
-  const [featured, setFeatured] = useState<FeaturedHome[]>([]);
+  const [homesByCity, setHomesByCity] = useState<HomesByCity<Home>>({});
+  const [featured, setFeatured] = useState<Home[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 

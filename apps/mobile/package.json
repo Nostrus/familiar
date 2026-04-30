@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@org/theme": "workspace:^",
+    "@org/types": "workspace:^",
     "@org/db": "workspace:^",
     "@react-navigation/native": "^7.1.33",
     "expo": "~55.0.18",
