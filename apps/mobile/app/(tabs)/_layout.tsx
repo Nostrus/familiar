@@ -1,11 +1,11 @@
-import React from 'react';
-import { SymbolView } from 'expo-symbols';
 import { Link, Tabs } from 'expo-router';
-import { Platform, Pressable } from 'react-native';
+import React from 'react';
+import { Pressable } from 'react-native';
 
-import Colors from '@/constants/Colors';
-import { useColorScheme } from '@/components/useColorScheme';
+import { Icon } from '@/components/Icon';
 import { useClientOnlyValue } from '@/components/useClientOnlyValue';
+import { useColorScheme } from '@/components/useColorScheme';
+import Colors from '@/constants/Colors';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -22,29 +22,12 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Tab One',
-          tabBarIcon: ({ color }) => (
-            <SymbolView
-              name={{
-                ios: 'chevron.left.forwardslash.chevron.right',
-                android: 'code',
-                web: 'code',
-              }}
-              tintColor={color}
-              size={28}
-            />
-          ),
+          title: 'Explore',
+          tabBarIcon: ({ color }) => <Icon name="search" color={color} />,
           headerRight: () => (
             <Link href="/modal" asChild>
               <Pressable style={{ marginRight: 15 }}>
-                {({ pressed }) => (
-                  <SymbolView
-                    name={{ ios: 'info.circle', android: 'info', web: 'info' }}
-                    size={25}
-                    tintColor={Colors[colorScheme].text}
-                    style={{ opacity: pressed ? 0.5 : 1 }}
-                  />
-                )}
+                {({ pressed }) => <Icon name="info" style={{ opacity: pressed ? 0.5 : 1 }} />}
               </Pressable>
             </Link>
           ),
@@ -54,17 +37,7 @@ export default function TabLayout() {
         name="two"
         options={{
           title: 'Tab Two',
-          tabBarIcon: ({ color }) => (
-            <SymbolView
-              name={{
-                ios: 'chevron.left.forwardslash.chevron.right',
-                android: 'code',
-                web: 'code',
-              }}
-              tintColor={color}
-              size={28}
-            />
-          ),
+          tabBarIcon: ({ color }) => <Icon name="code" color={color} />,
         }}
       />
     </Tabs>
