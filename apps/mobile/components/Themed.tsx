@@ -33,8 +33,9 @@ export function useThemeColor(
 export function Text(props: TextProps) {
   const { style, lightColor, darkColor, ...otherProps } = props;
   const color = useThemeColor({ light: lightColor, dark: darkColor }, 'text');
+  const fontFamily = 'Nunito-Regular'; // Set default font family for Text components
 
-  return <DefaultText style={[{ color }, style]} {...otherProps} />;
+  return <DefaultText style={[{ color, fontFamily }, style]} {...otherProps} />;
 }
 
 export function View(props: ViewProps) {

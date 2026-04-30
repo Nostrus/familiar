@@ -3,6 +3,10 @@ import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
+import NunitoBold from '../assets/fonts/Nunito-Bold.ttf';
+import NunitoLight from '../assets/fonts/Nunito-Light.ttf';
+import NunitoRegular from '../assets/fonts/Nunito-Regular.ttf';
+import NunitoSemiBold from '../assets/fonts/Nunito-SemiBold.ttf';
 
 import '../global.css';
 
@@ -21,7 +25,10 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const [loaded, error] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+    'Nunito-Regular': NunitoRegular,
+    'Nunito-SemiBold': NunitoSemiBold,
+    'Nunito-Bold': NunitoBold,
+    'Nunito-Light': NunitoLight,
   });
 
   // Expo Router uses Error Boundaries to catch errors in the navigation tree.
@@ -44,7 +51,7 @@ export default function RootLayout() {
 
 function RootLayoutNav() {
   return (
-    <Stack>
+    <Stack style={{ flex: 1, fontFamily: 'Nunito-Regular' }}>
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
     </Stack>

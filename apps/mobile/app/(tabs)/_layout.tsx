@@ -1,6 +1,5 @@
-import { Link, Tabs } from 'expo-router';
+import { Tabs } from 'expo-router';
 import React from 'react';
-import { Pressable } from 'react-native';
 
 import { Icon } from '@/components/Icon';
 import { useClientOnlyValue } from '@/components/useClientOnlyValue';
@@ -17,27 +16,48 @@ export default function TabLayout() {
         // Disable the static render of the header on web
         // to prevent a hydration error in React Navigation v6.
         headerShown: useClientOnlyValue(false, true),
+        tabBarStyle: {
+          paddingBottom: 4,
+          height: 60,
+        },
+        tabBarLabelStyle: {
+          fontFamily: 'Nunito-Regular',
+        },
       }}
     >
       <Tabs.Screen
-        name="index"
+        name="discover"
         options={{
-          title: 'Explore',
+          title: 'Discover',
           tabBarIcon: ({ color }) => <Icon name="search" color={color} />,
-          headerRight: () => (
-            <Link href="/modal" asChild>
-              <Pressable style={{ marginRight: 15 }}>
-                {({ pressed }) => <Icon name="info" style={{ opacity: pressed ? 0.5 : 1 }} />}
-              </Pressable>
-            </Link>
-          ),
         }}
       />
       <Tabs.Screen
-        name="two"
+        name="favorites"
         options={{
-          title: 'Tab Two',
-          tabBarIcon: ({ color }) => <Icon name="code" color={color} />,
+          title: 'Favorites',
+          tabBarIcon: ({ color }) => <Icon name="heart" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="host"
+        options={{
+          title: 'Host',
+          tabBarIcon: ({ color }) => <Icon name="home" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="requests"
+        options={{
+          title: 'Requests',
+          tabBarIcon: ({ color }) => <Icon name="mail" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="settings"
+        options={{
+          title: 'Settings',
+          tabBarIcon: ({ color }) => <Icon name="settings" color={color} />,
         }}
       />
     </Tabs>
