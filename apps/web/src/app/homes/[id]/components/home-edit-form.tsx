@@ -1,7 +1,7 @@
 'use client';
 
 import { AMENITIES, AmenityKey } from '@/lib/amenities';
-import { Home } from '@org/db';
+import type { Home } from '@org/types';
 import { X } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';

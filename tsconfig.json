@@ -13,6 +13,9 @@
       "path": "./packages/db"
     },
     {
+      "path": "./packages/types"
+    },
+    {
       "path": "./apps/mobile"
     }
   ]

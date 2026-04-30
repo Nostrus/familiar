@@ -1,17 +1,6 @@
+import type { Home } from '@org/types';
 import { FlatList } from 'react-native';
 import { HomeCard } from './HomeCard';
-
-interface Home {
-  id: number;
-  city: string;
-  country: string;
-  description: string;
-  bedrooms: number;
-  bathrooms: number;
-  maxGuests: number;
-  amenities: string[];
-  photos: string[];
-}
 
 interface HomeListProps {
   homes: Home[];

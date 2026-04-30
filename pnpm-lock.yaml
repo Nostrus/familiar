@@ -187,6 +187,9 @@ importers:
       '@org/theme':
         specifier: workspace:^
         version: link:../../packages/theme
+      '@org/types':
+        specifier: workspace:^
+        version: link:../../packages/types
       '@react-navigation/native':
         specifier: ^7.1.33
         version: 7.2.2(react-native@0.83.6(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.0))(react@19.2.0)
@@ -275,6 +278,9 @@ importers:
       '@org/theme':
         specifier: workspace:^
         version: link:../../packages/theme
+      '@org/types':
+        specifier: workspace:^
+        version: link:../../packages/types
       '@vercel/blob':
         specifier: ^2.3.3
         version: 2.3.3
@@ -371,6 +377,8 @@ importers:
       culori:
         specifier: ^4.0.2
         version: 4.0.2
+
+  packages/types: {}
 
 packages:
   '@0no-co/graphql.web@1.2.0':
