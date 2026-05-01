@@ -14,6 +14,7 @@ interface HomeListProps {
   showFavoriteButton?: boolean;
   favoriteHomeIds?: number[];
   onFavoriteChanged?: (homeId: number, isFavorited: boolean) => void;
+  navigateOnPress?: boolean;
 }
 
 export function HomeList({
@@ -28,6 +29,7 @@ export function HomeList({
   showFavoriteButton = true,
   favoriteHomeIds,
   onFavoriteChanged,
+  navigateOnPress = true,
 }: HomeListProps) {
   const renderItem: ListRenderItem<Home> = ({ item }) => (
     <HomeCard
@@ -38,6 +40,7 @@ export function HomeList({
       showFavoriteButton={showFavoriteButton}
       isFavorited={favoriteHomeIds?.includes(item.id) ?? false}
       onFavoriteChanged={onFavoriteChanged}
+      navigateOnPress={navigateOnPress}
     />
   );
 
