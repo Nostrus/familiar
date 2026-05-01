@@ -9,6 +9,7 @@ const nextConfig = {
   // Use this to set Nx-specific options
   // See: https://nx.dev/recipes/next/next-config-setup
   nx: {},
+  allowedDevOrigins: ['192.168.0.80'],
   transpilePackages: ['@org/db'],
   experimental: {
     externalDir: true,

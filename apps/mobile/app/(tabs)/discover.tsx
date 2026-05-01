@@ -3,8 +3,7 @@ import { useEffect, useState } from 'react';
 import { ActivityIndicator, ScrollView, View } from 'react-native';
 import { HomeList } from '../../components/HomeList';
 import { Text } from '../../components/Themed';
-
-const API_URL = process.env.EXPO_PUBLIC_API_URL;
+import { API_URL } from '../../lib/api';
 
 export default function DiscoverScreen() {
   const [homesByCity, setHomesByCity] = useState<HomesByCity<Home>>({});
