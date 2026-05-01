@@ -9,10 +9,11 @@ jest.mock('next/cache', () => ({ revalidatePath: jest.fn() }));
 jest.mock('@org/db', () => ({
   db: { select: jest.fn(), update: jest.fn() },
   homes: { id: 'id', ownerId: 'owner_id', photos: 'photos' },
+  updateOwnedHome: jest.fn(),
 }));
 
 import { auth } from '@clerk/nextjs/server';
-import { db } from '@org/db';
+import { db, updateOwnedHome } from '@org/db';
 import { put } from '@vercel/blob';
 import { updateHome, uploadHomePhoto } from '../src/app/homes/[id]/edit-actions';
 
@@ -20,6 +21,7 @@ const mockAuth = auth as unknown as jest.Mock;
 const mockPut = put as jest.Mock;
 const mockDbSelect = db.select as jest.Mock;
 const mockDbUpdate = db.update as jest.Mock;
+const mockUpdateOwnedHome = updateOwnedHome as jest.Mock;
 
 // Minimal drizzle chain builder
 function chain(result: unknown) {
@@ -54,8 +56,7 @@ describe('updateHome', () => {
 
   it('throws when the home is owned by a different user', async () => {
     mockAuth.mockResolvedValue({ userId: 'u1' });
-    const c = chain([{ id: 1, ownerId: 'other_user' }]);
-    mockDbSelect.mockReturnValue(c);
+    mockUpdateOwnedHome.mockRejectedValue(new Error('Not your home'));
     await expect(
       updateHome(makeFormData({ homeId: '1', description: 'x', city: 'Paris', country: 'France' })),
     ).rejects.toThrow('Not your home');

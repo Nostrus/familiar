@@ -1,6 +1,9 @@
 # Mobile App
 
-Expo + React Native + NativeWind mobile app.
+- Expo + React Native + NativeWind mobile app.
+- The app reuses the shared API client, domain types, and design tokens from the monorepo.
+- Same discovery and favorites/request flows on mobile as on web
+- Clerk mobile auth and Bearer-token API access.
 
 ## Development
 

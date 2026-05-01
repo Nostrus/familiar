@@ -1,8 +1,7 @@
 'use server';
 
-import { db } from '@org/db';
-import { homes } from '@org/db';
 import { auth } from '@clerk/nextjs/server';
+import { db, homes, updateOwnedHome } from '@org/db';
 import { put } from '@vercel/blob';
 import { eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
@@ -14,24 +13,19 @@ export async function updateHome(formData: FormData) {
   const homeId = Number(formData.get('homeId'));
   if (!Number.isInteger(homeId) || homeId <= 0) throw new Error('Invalid home id.');
 
-  const [home] = await db
-    .select({ id: homes.id, ownerId: homes.ownerId })
-    .from(homes)
-    .where(eq(homes.id, homeId))
-    .limit(1);
-
-  if (!home) throw new Error('Home not found.');
-  if (home.ownerId !== userId) throw new Error('Not your home.');
-
   const description = String(formData.get('description') ?? '').trim();
   const city = String(formData.get('city') ?? '').trim();
   const country = String(formData.get('country') ?? '').trim();
   const amenities = formData.getAll('amenities').map(String);
 
-  await db
-    .update(homes)
-    .set({ description, city, country, amenities, updatedAt: new Date() })
-    .where(eq(homes.id, homeId));
+  await updateOwnedHome({
+    homeId,
+    ownerId: userId,
+    description,
+    city,
+    country,
+    amenities,
+  });
 
   revalidatePath(`/homes/${homeId}`);
 }
@@ -99,7 +93,7 @@ export async function removeHomePhoto(homeId: number, photoUrl: string) {
 
   await db
     .update(homes)
-    .set({ photos: home.photos.filter((p) => p !== photoUrl), updatedAt: new Date() })
+    .set({ photos: home.photos.filter((p: string) => p !== photoUrl), updatedAt: new Date() })
     .where(eq(homes.id, homeId));
 
   revalidatePath(`/homes/${homeId}`);
