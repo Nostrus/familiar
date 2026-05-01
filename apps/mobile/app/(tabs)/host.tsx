@@ -156,8 +156,8 @@ export default function HostScreen() {
         renderItem={({ item }) => {
           if (item === 'homes') {
             return (
-              <View>
-                <Text className="text-lg font-bold text-slate-900 px-5 pt-5 pb-2">Your Homes</Text>
+              <View className="px-5 pb-8">
+                <Text className="text-lg font-bold text-slate-900 pt-5 pb-2">Your Home</Text>
                 <HomeList
                   homes={homes}
                   vertical
@@ -186,7 +186,7 @@ export default function HostScreen() {
 
           return (
             <View className="px-5 pb-8">
-              <Text className="text-lg font-bold text-slate-900 pt-2 pb-3">Incoming Requests</Text>
+              <Text className="text-lg font-bold text-slate-900 pt-2 pb-5">Incoming Requests</Text>
               {requestsLoading ? (
                 <Text className="text-center text-gray-600 mt-2">Loading...</Text>
               ) : incomingRequests.length === 0 ? (
