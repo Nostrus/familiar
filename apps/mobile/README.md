@@ -41,3 +41,15 @@ NativeWind + shared `@org/theme` package:
 - `components/` - Reusable UI components
 - `constants/` - App constants (colors, etc.)
 - `assets/` - Images, fonts, etc.
+
+## Adding environment variables
+
+- EAS is used for [building](https://docs.expo.dev/build/setup/) and also for managing [environment variables](https://docs.expo.dev/eas/environment-variables/)
+  - you can use `eas env:create --name EXPO_PUBLIC_API_URL --value https://api.example.com --environment production --visibility plaintext` to add new variables
+- [Build options](https://docs.expo.dev/build/introduction/)
+
+## Running on iOS Simulator
+
+- `pnpm run build:ios:simulator` to build the app with EAS
+- `npx expo start` to start the dev server locally
+- press `i` to launch in the simulator

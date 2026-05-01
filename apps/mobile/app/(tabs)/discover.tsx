@@ -1,6 +1,6 @@
 import type { Home, HomesByCity } from '@org/types';
 import { useEffect, useState } from 'react';
-import { ScrollView, View } from 'react-native';
+import { ActivityIndicator, ScrollView, View } from 'react-native';
 import { HomeList } from '../../components/HomeList';
 import { Text } from '../../components/Themed';
 
@@ -42,7 +42,11 @@ export default function DiscoverScreen() {
 
   return (
     <ScrollView className="flex-1" contentContainerStyle={{ padding: 20, overflow: 'visible' }}>
-      {loading && <Text className="text-center mt-10 text-gray-600">Loading...</Text>}
+      {loading && (
+        <View className="flex-1 justify-center items-center mt-40">
+          <ActivityIndicator size="large" />
+        </View>
+      )}
 
       {error && <Text className="text-center mt-10 text-red-600">{error}</Text>}
 

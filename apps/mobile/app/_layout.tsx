@@ -1,3 +1,5 @@
+import { ClerkProvider } from '@clerk/expo';
+import { tokenCache } from '@clerk/expo/token-cache';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
@@ -9,6 +11,12 @@ import NunitoRegular from '../assets/fonts/Nunito-Regular.ttf';
 import NunitoSemiBold from '../assets/fonts/Nunito-SemiBold.ttf';
 
 import '../global.css';
+
+const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!;
+
+if (!publishableKey) {
+  throw new Error('Add your Clerk Publishable Key to the .env file');
+}
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -51,9 +59,11 @@ export default function RootLayout() {
 
 function RootLayoutNav() {
   return (
-    <Stack style={{ flex: 1, fontFamily: 'Nunito-Regular' }}>
-      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
-    </Stack>
+    <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
+      <Stack>
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
+      </Stack>
+    </ClerkProvider>
   );
 }

@@ -4,23 +4,30 @@
   "version": "0.0.1",
   "scripts": {
     "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
-    "web": "expo start --web"
+    "android": "expo run:android",
+    "ios": "expo run:ios",
+    "web": "expo start --web",
+    "lint": "expo lint",
+    "build:ios": "eas build --platform ios",
+    "build:ios:simulator": "eas build --profile ios-simulator --platform ios"
   },
   "dependencies": {
-    "@org/theme": "workspace:^",
-    "@org/types": "workspace:^",
-    "@org/db": "workspace:^",
+    "@clerk/expo": "^3.2.6",
+    "@org/theme": "workspace:*",
+    "@org/types": "workspace:*",
     "@react-navigation/native": "^7.1.33",
     "expo": "~55.0.18",
+    "expo-auth-session": "~55.0.15",
     "expo-constants": "~55.0.15",
+    "expo-dev-client": "~55.0.28",
     "expo-font": "~55.0.6",
     "expo-linking": "~55.0.14",
     "expo-router": "~55.0.13",
+    "expo-secure-store": "~55.0.13",
     "expo-splash-screen": "~55.0.19",
     "expo-status-bar": "~55.0.5",
     "expo-symbols": "~55.0.7",
+    "expo-updates": "~55.0.21",
     "expo-web-browser": "~55.0.14",
     "nativewind": "^4.2.3",
     "react": "19.2.0",
@@ -40,5 +47,6 @@
     "tailwindcss": "^3.4.17",
     "typescript": "~5.9.2"
   },
-  "private": true
+  "private": true,
+  "packageManager": "pnpm@10.33.2"
 }
