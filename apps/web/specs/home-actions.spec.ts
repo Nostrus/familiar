@@ -16,10 +16,16 @@ jest.mock('@org/db', () => ({
     status: 'status',
     updatedAt: 'updated_at',
   },
+  toggleHomeFavorite: jest.fn(),
+  updateStayRequestStatus: jest.fn(),
 }));
 
 import { auth } from '@clerk/nextjs/server';
-import { db } from '@org/db';
+import {
+  db,
+  updateStayRequestStatus as dbUpdateStayRequestStatus,
+  toggleHomeFavorite,
+} from '@org/db';
 import { toggleFavorite, updateStayRequestStatus } from '../src/app/homes/[id]/actions';
 
 const mockAuth = auth as unknown as jest.Mock;
@@ -27,6 +33,8 @@ const mockDbSelect = db.select as jest.Mock;
 const mockDbInsert = db.insert as jest.Mock;
 const mockDbDelete = db.delete as jest.Mock;
 const mockDbUpdate = db.update as jest.Mock;
+const mockToggleHomeFavorite = toggleHomeFavorite as jest.Mock;
+const mockDbUpdateStayRequestStatus = dbUpdateStayRequestStatus as jest.Mock;
 
 function makeFormData(fields: Record<string, string>) {
   const fd = new FormData();
@@ -66,30 +74,20 @@ describe('toggleFavorite', () => {
 
   it('removes the favorite when one already exists', async () => {
     mockAuth.mockResolvedValue({ userId: 'u1' });
-    // select returns an existing favorite
-    mockDbSelect.mockReturnValue(limitChain([{ id: 42 }]));
-    mockDbDelete.mockReturnValue(whereChain());
+    mockToggleHomeFavorite.mockResolvedValue({ isFavorited: false });
 
     await toggleFavorite(makeFormData({ homeId: '5' }));
 
-    expect(mockDbDelete).toHaveBeenCalledTimes(1);
-    expect(mockDbInsert).not.toHaveBeenCalled();
+    expect(mockToggleHomeFavorite).toHaveBeenCalledWith({ homeId: 5, userId: 'u1' });
   });
 
   it('inserts a favorite when none exists', async () => {
     mockAuth.mockResolvedValue({ userId: 'u1' });
-    // select returns empty
-    mockDbSelect.mockReturnValue(limitChain([]));
-    const valuesResolves = jest.fn().mockResolvedValue(undefined);
-    mockDbInsert.mockReturnValue({ values: valuesResolves });
+    mockToggleHomeFavorite.mockResolvedValue({ isFavorited: true });
 
     await toggleFavorite(makeFormData({ homeId: '5' }));
 
-    expect(mockDbInsert).toHaveBeenCalledTimes(1);
-    expect(valuesResolves).toHaveBeenCalledWith(
-      expect.objectContaining({ homeId: 5, userId: 'u1' }),
-    );
-    expect(mockDbDelete).not.toHaveBeenCalled();
+    expect(mockToggleHomeFavorite).toHaveBeenCalledWith({ homeId: 5, userId: 'u1' });
   });
 });
 
@@ -114,8 +112,8 @@ describe('updateStayRequestStatus', () => {
 
   it('throws when the caller is not the home owner', async () => {
     mockAuth.mockResolvedValue({ userId: 'u1' });
-    mockDbSelect.mockReturnValue(
-      limitChain([{ id: 2, homeId: 1, status: 'pending', ownerId: 'owner_other' }]),
+    mockDbUpdateStayRequestStatus.mockRejectedValue(
+      new Error('You are not allowed to update this request.'),
     );
     await expect(
       updateStayRequestStatus(makeFormData({ homeId: '1', requestId: '2', status: 'approved' })),
@@ -124,16 +122,17 @@ describe('updateStayRequestStatus', () => {
 
   it('updates the request status when the owner approves', async () => {
     mockAuth.mockResolvedValue({ userId: 'owner_1' });
-    mockDbSelect.mockReturnValue(
-      limitChain([{ id: 2, homeId: 1, status: 'pending', ownerId: 'owner_1' }]),
-    );
-    const setChain = whereChain();
-    mockDbUpdate.mockReturnValue(setChain);
+    mockDbUpdateStayRequestStatus.mockResolvedValue(undefined);
 
     await updateStayRequestStatus(
       makeFormData({ homeId: '1', requestId: '2', status: 'approved' }),
     );
 
-    expect(mockDbUpdate).toHaveBeenCalledTimes(1);
+    expect(mockDbUpdateStayRequestStatus).toHaveBeenCalledWith({
+      requestId: 2,
+      homeId: 1,
+      userId: 'owner_1',
+      nextStatus: 'approved',
+    });
   });
 });

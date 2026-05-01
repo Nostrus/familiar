@@ -9,7 +9,6 @@ import NunitoBold from '../assets/fonts/Nunito-Bold.ttf';
 import NunitoLight from '../assets/fonts/Nunito-Light.ttf';
 import NunitoRegular from '../assets/fonts/Nunito-Regular.ttf';
 import NunitoSemiBold from '../assets/fonts/Nunito-SemiBold.ttf';
-
 import '../global.css';
 
 const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!;

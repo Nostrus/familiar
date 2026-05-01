@@ -15,15 +15,18 @@ jest.mock('@org/db', () => ({
     requesterId: 'requester_id',
     status: 'status',
   },
+  createStayRequest: jest.fn(),
+  cancelStayRequest: jest.fn(),
 }));
 
 import { auth } from '@clerk/nextjs/server';
-import { db } from '@org/db';
+import { db, createStayRequest as dbCreateStayRequest } from '@org/db';
 import { createStayRequest } from '../src/app/homes/[id]/actions';
 
 const mockAuth = auth as unknown as jest.Mock;
 const mockDbSelect = db.select as jest.Mock;
 const mockDbInsert = db.insert as jest.Mock;
+const mockDbCreateStayRequest = dbCreateStayRequest as jest.Mock;
 
 // Reusable drizzle chain that resolves to `result` at `.limit()`
 function chain(result: unknown) {
@@ -97,9 +100,7 @@ describe('createStayRequest', () => {
 
   it('throws when user tries to request their own home', async () => {
     mockAuth.mockResolvedValue({ userId: 'owner_1' });
-
-    const homeChain = chain([{ id: 1, ownerId: 'owner_1' }]);
-    mockDbSelect.mockReturnValue(homeChain);
+    mockDbCreateStayRequest.mockRejectedValue(new Error('You cannot request your own home.'));
 
     await expect(
       createStayRequest(
@@ -114,18 +115,7 @@ describe('createStayRequest', () => {
 
   it('inserts a stay request for a valid request', async () => {
     mockAuth.mockResolvedValue({ userId: 'requester_1' });
-
-    const homeChain = chain([{ id: 1, ownerId: 'owner_other' }]);
-    const pendingChain = chain([]); // no existing pending
-
-    let callCount = 0;
-    mockDbSelect.mockImplementation(() => {
-      callCount++;
-      return callCount === 1 ? homeChain : pendingChain;
-    });
-
-    const valuesResolves = jest.fn().mockResolvedValue(undefined);
-    mockDbInsert.mockReturnValue({ values: valuesResolves });
+    mockDbCreateStayRequest.mockResolvedValue(undefined);
 
     await createStayRequest(
       makeFormData({
@@ -135,13 +125,11 @@ describe('createStayRequest', () => {
       }),
     );
 
-    expect(mockDbInsert).toHaveBeenCalledTimes(1);
-    expect(valuesResolves).toHaveBeenCalledWith(
-      expect.objectContaining({
-        homeId: 1,
-        requesterId: 'requester_1',
-        status: 'pending',
-      }),
-    );
+    expect(mockDbCreateStayRequest).toHaveBeenCalledWith({
+      homeId: 1,
+      userId: 'requester_1',
+      requestedStartDate: '2026-06-01',
+      requestedEndDate: '2026-06-10',
+    });
   });
 });

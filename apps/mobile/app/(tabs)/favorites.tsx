@@ -1,17 +1,35 @@
+import { Text, View } from '@/components/Themed';
 import { useAuth } from '@clerk/expo';
 import { AuthView } from '@clerk/expo/native';
 import type { Home } from '@org/types';
 import { useEffect, useState } from 'react';
-import { ScrollView } from 'react-native';
+import { ActivityIndicator } from 'react-native';
 import { HomeList } from '../../components/HomeList';
-import { Text } from '../../components/Themed';
 import { API_URL } from '../../lib/api';
 
 export default function FavoritesScreen() {
-  const { isSignedIn, getToken } = useAuth();
+  const { isSignedIn, getToken, isLoaded } = useAuth({ treatPendingAsSignedOut: false });
   const [favorites, setFavorites] = useState<Home[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  function handleFavoriteChanged(homeId: number, isFavorited: boolean) {
+    if (!isFavorited) {
+      setFavorites((prev) => prev.filter((home) => home.id !== homeId));
+    }
+  }
+
+  if (!isLoaded) {
+    return (
+      <View className="flex-1 justify-center items-center mt-40">
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
+
+  if (!isSignedIn) {
+    return <AuthView mode="signInOrUp" />;
+  }
 
   useEffect(() => {
     if (!isSignedIn) return;
@@ -40,18 +58,25 @@ export default function FavoritesScreen() {
     })();
   }, [isSignedIn]);
 
-  if (!isSignedIn) {
-    return <AuthView mode="signInOrUp" />;
-  }
-
   return (
-    <ScrollView className="flex-1" contentContainerStyle={{ padding: 20, overflow: 'visible' }}>
-      {loading && <Text className="text-center mt-10 text-gray-600">Loading...</Text>}
-      {error && <Text className="text-center mt-10 text-red-600">{error}</Text>}
-      {!loading && !error && favorites.length === 0 && (
-        <Text className="text-center mt-10 text-gray-500">No favorites yet.</Text>
-      )}
-      {!loading && !error && favorites.length > 0 && <HomeList homes={favorites} />}
-    </ScrollView>
+    <HomeList
+      homes={favorites}
+      vertical
+      contentPadding={20}
+      favoriteHomeIds={favorites.map((home) => home.id)}
+      onFavoriteChanged={handleFavoriteChanged}
+      ListEmptyComponent={
+        loading ? null : <Text className="text-center mt-10 text-gray-500">No favorites yet.</Text>
+      }
+      ListHeaderComponent={
+        error ? (
+          <Text className="text-center mt-10 text-red-600">{error}</Text>
+        ) : loading ? (
+          <View className="flex-1 justify-center items-center mt-40">
+            <ActivityIndicator size="large" />
+          </View>
+        ) : null
+      }
+    />
   );
 }

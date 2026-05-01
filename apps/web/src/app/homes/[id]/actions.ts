@@ -1,10 +1,13 @@
 'use server';
 
-import { db } from '@org/db';
-import { homeFavorites, homeStayRequests, homes } from '@org/db';
 import { ensureClerkUser } from '@/lib/ensure-clerk-user';
 import { auth } from '@clerk/nextjs/server';
-import { and, eq } from 'drizzle-orm';
+import {
+  cancelStayRequest,
+  createStayRequest as dbCreateStayRequest,
+  updateStayRequestStatus as dbUpdateStayRequestStatus,
+  toggleHomeFavorite,
+} from '@org/db';
 import { revalidatePath } from 'next/cache';
 
 function parseId(value: FormDataEntryValue | null): number {
@@ -48,43 +51,7 @@ export async function createStayRequest(formData: FormData) {
     throw new Error('Requested start date must be before end date.');
   }
 
-  const home = await db
-    .select({ id: homes.id, ownerId: homes.ownerId })
-    .from(homes)
-    .where(eq(homes.id, homeId))
-    .limit(1);
-
-  if (!home[0]) {
-    throw new Error('Home not found.');
-  }
-  if (!home[0].ownerId) {
-    throw new Error('This home cannot receive requests yet.');
-  }
-  if (home[0].ownerId === userId) {
-    throw new Error('You cannot request your own home.');
-  }
-
-  const existingPending = await db
-    .select({ id: homeStayRequests.id })
-    .from(homeStayRequests)
-    .where(
-      and(
-        eq(homeStayRequests.homeId, homeId),
-        eq(homeStayRequests.requesterId, userId),
-        eq(homeStayRequests.status, 'pending'),
-      ),
-    )
-    .limit(1);
-
-  if (!existingPending[0]) {
-    await db.insert(homeStayRequests).values({
-      homeId,
-      requesterId: userId,
-      requestedStartDate,
-      requestedEndDate,
-      status: 'pending',
-    });
-  }
+  await dbCreateStayRequest({ homeId, userId, requestedStartDate, requestedEndDate });
 
   revalidatePath(`/homes/${homeId}`);
   revalidatePath('/my-requests');
@@ -105,33 +72,7 @@ export async function updateStayRequestStatus(formData: FormData) {
     throw new Error('Invalid status.');
   }
 
-  const request = await db
-    .select({
-      id: homeStayRequests.id,
-      homeId: homeStayRequests.homeId,
-      status: homeStayRequests.status,
-      ownerId: homes.ownerId,
-    })
-    .from(homeStayRequests)
-    .innerJoin(homes, eq(homes.id, homeStayRequests.homeId))
-    .where(and(eq(homeStayRequests.id, requestId), eq(homeStayRequests.homeId, homeId)))
-    .limit(1);
-
-  if (!request[0]) {
-    throw new Error('Request not found.');
-  }
-  if (request[0].ownerId !== userId) {
-    throw new Error('You are not allowed to update this request.');
-  }
-  if (request[0].status !== 'pending') {
-    revalidatePath(`/homes/${homeId}`);
-    return;
-  }
-
-  await db
-    .update(homeStayRequests)
-    .set({ status: nextStatus, updatedAt: new Date() })
-    .where(eq(homeStayRequests.id, requestId));
+  await dbUpdateStayRequestStatus({ requestId, homeId, userId, nextStatus });
 
   revalidatePath(`/homes/${homeId}`);
 }
@@ -144,35 +85,10 @@ export async function cancelMyStayRequest(formData: FormData) {
 
   const requestId = parseId(formData.get('requestId'));
 
-  const request = await db
-    .select({
-      id: homeStayRequests.id,
-      homeId: homeStayRequests.homeId,
-      requesterId: homeStayRequests.requesterId,
-      status: homeStayRequests.status,
-    })
-    .from(homeStayRequests)
-    .where(eq(homeStayRequests.id, requestId))
-    .limit(1);
-
-  if (!request[0]) {
-    throw new Error('Request not found.');
-  }
-
-  if (request[0].requesterId !== userId) {
-    throw new Error('You are not allowed to cancel this request.');
-  }
-
-  if (request[0].status !== 'pending') {
-    revalidatePath('/my-requests');
-    revalidatePath(`/homes/${request[0].homeId}`);
-    return;
-  }
-
-  await db.delete(homeStayRequests).where(eq(homeStayRequests.id, requestId));
+  const { homeId } = await cancelStayRequest({ requestId, userId });
 
   revalidatePath('/my-requests');
-  revalidatePath(`/homes/${request[0].homeId}`);
+  revalidatePath(`/homes/${homeId}`);
 }
 
 export async function toggleFavorite(formData: FormData) {
@@ -185,17 +101,7 @@ export async function toggleFavorite(formData: FormData) {
 
   const homeId = parseId(formData.get('homeId'));
 
-  const existingFavorite = await db
-    .select({ id: homeFavorites.id })
-    .from(homeFavorites)
-    .where(and(eq(homeFavorites.homeId, homeId), eq(homeFavorites.userId, userId)))
-    .limit(1);
-
-  if (existingFavorite[0]) {
-    await db.delete(homeFavorites).where(eq(homeFavorites.id, existingFavorite[0].id));
-  } else {
-    await db.insert(homeFavorites).values({ homeId, userId });
-  }
+  await toggleHomeFavorite({ homeId, userId });
 
   revalidatePath(`/homes/${homeId}`);
   revalidatePath('/my-favorites');
