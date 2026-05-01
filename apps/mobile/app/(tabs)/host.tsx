@@ -1,19 +1,37 @@
 import { useAuth } from '@clerk/expo';
 import { AuthView } from '@clerk/expo/native';
-import type { Home } from '@org/types';
+import Feather from '@expo/vector-icons/Feather';
+import type { Home, IncomingStayRequest } from '@org/types';
 import { useEffect, useState } from 'react';
-import { Modal, Pressable, TextInput, View } from 'react-native';
+import { FlatList, SectionList, View } from 'react-native';
+import { HomeEditModal, type HomeEditDraft } from '../../components/HomeEditModal';
 import { HomeList } from '../../components/HomeList';
 import { Text } from '../../components/Themed';
 import { API_URL } from '../../lib/api';
+
+const STATUS_CONFIG = {
+  pending: { label: 'Pending', bg: 'bg-amber-100', text: 'text-amber-700' },
+  approved: { label: 'Approved', bg: 'bg-green-100', text: 'text-green-700' },
+  rejected: { label: 'Rejected', bg: 'bg-red-100', text: 'text-red-600' },
+} as const;
+
+function formatDate(dateStr: string) {
+  return new Date(`${dateStr}T00:00:00`).toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  });
+}
 
 export default function HostScreen() {
   const { isSignedIn, getToken } = useAuth();
   const [homes, setHomes] = useState<Home[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [incomingRequests, setIncomingRequests] = useState<IncomingStayRequest[]>([]);
+  const [requestsLoading, setRequestsLoading] = useState(true);
   const [editingHome, setEditingHome] = useState<Home | null>(null);
-  const [draft, setDraft] = useState({
+  const [draft, setDraft] = useState<HomeEditDraft>({
     description: '',
     city: '',
     country: '',
@@ -87,10 +105,28 @@ export default function HostScreen() {
         });
         if (!res.ok) throw new Error('Failed to fetch homes');
         setHomes(await res.json());
-      } catch (err) {
+      } catch {
         setError('Failed to load your homes. Please try again.');
       } finally {
         setLoading(false);
+      }
+    })();
+  }, [isSignedIn]);
+
+  useEffect(() => {
+    if (!isSignedIn) return;
+    (async () => {
+      try {
+        setRequestsLoading(true);
+        const token = await getToken();
+        const res = await fetch(`${API_URL}/api/my-homes/requests`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (res.ok) setIncomingRequests(await res.json());
+      } catch {
+        // non-critical, ignore
+      } finally {
+        setRequestsLoading(false);
       }
     })();
   }, [isSignedIn]);
@@ -99,111 +135,129 @@ export default function HostScreen() {
     return <AuthView mode="signInOrUp" />;
   }
 
+  const sections = [
+    {
+      key: 'homes',
+      data: ['homes'] as const,
+    },
+    {
+      key: 'requests',
+      data: ['requests'] as const,
+    },
+  ];
+
   return (
     <>
-      <HomeList
-        homes={homes}
-        vertical
-        contentPadding={20}
-        showEditButton
-        onPressEdit={handleEditHome}
-        ListHeaderComponent={
-          loading ? (
-            <Text className="text-center mt-10 text-gray-600">Loading...</Text>
-          ) : error ? (
-            <Text className="text-center mt-10 text-red-600">{error}</Text>
-          ) : null
-        }
-        ListEmptyComponent={
-          !loading && !error ? (
-            <Text className="text-center mt-10 text-gray-500">You have no homes listed yet.</Text>
-          ) : null
-        }
+      <SectionList
+        sections={sections}
+        keyExtractor={(item) => item}
+        stickySectionHeadersEnabled={false}
+        renderSectionHeader={() => null}
+        renderItem={({ item }) => {
+          if (item === 'homes') {
+            return (
+              <View>
+                <Text className="text-lg font-bold text-slate-900 px-5 pt-5 pb-2">Your Homes</Text>
+                <HomeList
+                  homes={homes}
+                  vertical
+                  contentPadding={20}
+                  showEditButton
+                  showFavoriteButton={false}
+                  onPressEdit={handleEditHome}
+                  ListHeaderComponent={
+                    loading ? (
+                      <Text className="text-center mt-4 text-gray-600">Loading...</Text>
+                    ) : error ? (
+                      <Text className="text-center mt-4 text-red-600">{error}</Text>
+                    ) : null
+                  }
+                  ListEmptyComponent={
+                    !loading && !error ? (
+                      <Text className="text-center mt-4 mb-4 text-gray-500">
+                        You have no homes listed yet.
+                      </Text>
+                    ) : null
+                  }
+                />
+              </View>
+            );
+          }
+
+          return (
+            <View className="px-5 pb-8">
+              <Text className="text-lg font-bold text-slate-900 pt-2 pb-3">Incoming Requests</Text>
+              {requestsLoading ? (
+                <Text className="text-center text-gray-600 mt-2">Loading...</Text>
+              ) : incomingRequests.length === 0 ? (
+                <Text className="text-center text-gray-500 mt-2">No incoming requests yet.</Text>
+              ) : (
+                <FlatList
+                  data={incomingRequests}
+                  keyExtractor={(req) => String(req.id)}
+                  scrollEnabled={false}
+                  renderItem={({ item }) => {
+                    const status = STATUS_CONFIG[item.status] ?? STATUS_CONFIG.pending;
+                    const requester = [item.requesterFirstName, item.requesterLastName]
+                      .filter(Boolean)
+                      .join(' ');
+                    return (
+                      <View className="mb-4 bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                        <View className="p-4">
+                          <View className="flex-row items-start justify-between mb-1">
+                            <Text
+                              className="text-base font-semibold text-slate-900 flex-1 mr-2"
+                              numberOfLines={2}
+                            >
+                              {item.homeDescription}
+                            </Text>
+                            <View className={`rounded-full px-3 py-1 ${status.bg}`}>
+                              <Text className={`text-xs font-semibold ${status.text}`}>
+                                {status.label}
+                              </Text>
+                            </View>
+                          </View>
+
+                          <View className="flex-row items-center gap-1 mb-2">
+                            <Feather name="map-pin" size={12} color="#94a3b8" />
+                            <Text className="text-sm text-slate-500">
+                              {item.homeCity}, {item.homeCountry}
+                            </Text>
+                          </View>
+
+                          {requester ? (
+                            <View className="flex-row items-center gap-1 mb-2">
+                              <Feather name="user" size={12} color="#94a3b8" />
+                              <Text className="text-sm text-slate-500">{requester}</Text>
+                            </View>
+                          ) : null}
+
+                          <View className="flex-row items-center gap-2 bg-slate-50 rounded-xl px-3 py-2">
+                            <Feather name="calendar" size={14} color="#64748b" />
+                            <Text className="text-sm text-slate-600">
+                              {formatDate(item.requestedStartDate)} –{' '}
+                              {formatDate(item.requestedEndDate)}
+                            </Text>
+                          </View>
+                        </View>
+                      </View>
+                    );
+                  }}
+                />
+              )}
+            </View>
+          );
+        }}
       />
 
-      <Modal
-        visible={!!editingHome}
-        transparent
-        animationType="slide"
-        onRequestClose={() => setEditingHome(null)}
-      >
-        <View className="flex-1 justify-end bg-black/35">
-          <View className="rounded-t-3xl bg-white p-5">
-            <Text className="text-lg font-semibold text-slate-900 mb-4">Edit home</Text>
-
-            <Text className="text-xs text-slate-500 mb-1">Description</Text>
-            <TextInput
-              value={draft.description}
-              onChangeText={(value) => setDraft((prev) => ({ ...prev, description: value }))}
-              className="mb-3 rounded-lg border border-slate-300 px-3 py-2 text-slate-900"
-              placeholder="Describe your home"
-              multiline
-            />
-
-            <Text className="text-xs text-slate-500 mb-1">City</Text>
-            <TextInput
-              value={draft.city}
-              onChangeText={(value) => setDraft((prev) => ({ ...prev, city: value }))}
-              className="mb-3 rounded-lg border border-slate-300 px-3 py-2 text-slate-900"
-              placeholder="City"
-            />
-
-            <Text className="text-xs text-slate-500 mb-1">Country</Text>
-            <TextInput
-              value={draft.country}
-              onChangeText={(value) => setDraft((prev) => ({ ...prev, country: value }))}
-              className="mb-3 rounded-lg border border-slate-300 px-3 py-2 text-slate-900"
-              placeholder="Country"
-            />
-
-            <View className="flex-row gap-2 mb-4">
-              <View className="flex-1">
-                <Text className="text-xs text-slate-500 mb-1">Beds</Text>
-                <TextInput
-                  value={draft.bedrooms}
-                  onChangeText={(value) => setDraft((prev) => ({ ...prev, bedrooms: value }))}
-                  keyboardType="number-pad"
-                  className="rounded-lg border border-slate-300 px-3 py-2 text-slate-900"
-                />
-              </View>
-              <View className="flex-1">
-                <Text className="text-xs text-slate-500 mb-1">Baths</Text>
-                <TextInput
-                  value={draft.bathrooms}
-                  onChangeText={(value) => setDraft((prev) => ({ ...prev, bathrooms: value }))}
-                  keyboardType="number-pad"
-                  className="rounded-lg border border-slate-300 px-3 py-2 text-slate-900"
-                />
-              </View>
-              <View className="flex-1">
-                <Text className="text-xs text-slate-500 mb-1">Guests</Text>
-                <TextInput
-                  value={draft.maxGuests}
-                  onChangeText={(value) => setDraft((prev) => ({ ...prev, maxGuests: value }))}
-                  keyboardType="number-pad"
-                  className="rounded-lg border border-slate-300 px-3 py-2 text-slate-900"
-                />
-              </View>
-            </View>
-
-            <View className="flex-row justify-end gap-2">
-              <Pressable
-                onPress={() => setEditingHome(null)}
-                className="rounded-lg border border-slate-300 px-4 py-2"
-              >
-                <Text className="text-slate-700">Cancel</Text>
-              </Pressable>
-              <Pressable
-                onPress={handleSaveEdit}
-                disabled={saving}
-                className="rounded-lg bg-primary px-4 py-2"
-              >
-                <Text className="text-white font-medium">{saving ? 'Saving...' : 'Save'}</Text>
-              </Pressable>
-            </View>
-          </View>
-        </View>
-      </Modal>
+      <HomeEditModal
+        home={editingHome}
+        draft={draft}
+        saving={saving}
+        onClose={() => setEditingHome(null)}
+        onSave={handleSaveEdit}
+        onDraftChange={setDraft}
+      />
     </>
   );
 }
