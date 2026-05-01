@@ -18,7 +18,7 @@ export default function TabLayout() {
         headerShown: useClientOnlyValue(false, true),
         tabBarStyle: {
           paddingBottom: 4,
-          height: 60,
+          height: 80,
         },
         tabBarLabelStyle: {
           fontFamily: 'Nunito-Regular',
@@ -54,10 +54,10 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="settings"
+        name="profile"
         options={{
-          title: 'Settings',
-          tabBarIcon: ({ color }) => <Icon name="settings" color={color} />,
+          title: 'Profile',
+          tabBarIcon: ({ color }) => <Icon name="user" color={color} />,
         }}
       />
     </Tabs>
