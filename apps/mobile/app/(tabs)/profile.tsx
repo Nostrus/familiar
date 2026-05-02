@@ -1,6 +1,6 @@
 import { useAuth, useClerk, useUser, useUserProfileModal } from '@clerk/expo';
 import { AuthView, UserButton } from '@clerk/expo/native';
-import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Text } from '../../components/Themed';
 
 export default function ProfileScreen() {
@@ -15,8 +15,8 @@ export default function ProfileScreen() {
 
   if (!isLoaded) {
     return (
-      <View style={styles.container}>
-        <Text>Loading profile...</Text>
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" />
       </View>
     );
   }
@@ -71,6 +71,12 @@ export default function ProfileScreen() {
 }
 
 const styles = StyleSheet.create({
+  loadingContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#f8fafc',
+  },
   container: {
     flex: 1,
     paddingHorizontal: 20,

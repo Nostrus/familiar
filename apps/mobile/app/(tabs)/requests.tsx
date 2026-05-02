@@ -3,7 +3,7 @@ import { AuthView } from '@clerk/expo/native';
 import Feather from '@expo/vector-icons/Feather';
 import type { StayRequestWithHome } from '@org/types';
 import { useEffect, useState } from 'react';
-import { Alert, FlatList, Pressable, View } from 'react-native';
+import { ActivityIndicator, Alert, FlatList, Pressable, View } from 'react-native';
 import { Text } from '../../components/Themed';
 import { API_URL } from '../../lib/api';
 
@@ -84,7 +84,9 @@ export default function RequestsScreen() {
         error ? (
           <Text className="text-center mt-10 text-red-600">{error}</Text>
         ) : loading ? (
-          <Text className="text-center mt-10 text-gray-600">Loading...</Text>
+          <View className="items-center py-4">
+            <ActivityIndicator size="small" />
+          </View>
         ) : null
       }
       ListEmptyComponent={
