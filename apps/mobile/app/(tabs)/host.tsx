@@ -3,7 +3,7 @@ import { AuthView } from '@clerk/expo/native';
 import Feather from '@expo/vector-icons/Feather';
 import type { Home, IncomingStayRequest } from '@org/types';
 import { useEffect, useState } from 'react';
-import { FlatList, SectionList, View } from 'react-native';
+import { ActivityIndicator, FlatList, SectionList, View } from 'react-native';
 import { HomeEditModal, type HomeEditDraft } from '../../components/HomeEditModal';
 import { HomeList } from '../../components/HomeList';
 import { Text } from '../../components/Themed';
@@ -167,7 +167,9 @@ export default function HostScreen() {
                   onPressEdit={handleEditHome}
                   ListHeaderComponent={
                     loading ? (
-                      <Text className="text-center mt-4 text-gray-600">Loading...</Text>
+                      <View className="items-center py-4">
+                        <ActivityIndicator size="small" />
+                      </View>
                     ) : error ? (
                       <Text className="text-center mt-4 text-red-600">{error}</Text>
                     ) : null
@@ -188,7 +190,9 @@ export default function HostScreen() {
             <View className="px-5 pb-8">
               <Text className="text-lg font-bold text-slate-900 pt-2 pb-5">Incoming Requests</Text>
               {requestsLoading ? (
-                <Text className="text-center text-gray-600 mt-2">Loading...</Text>
+                <View className="items-center py-2">
+                  <ActivityIndicator size="small" />
+                </View>
               ) : incomingRequests.length === 0 ? (
                 <Text className="text-center text-gray-500 mt-2">No incoming requests yet.</Text>
               ) : (

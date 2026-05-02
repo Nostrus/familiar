@@ -19,18 +19,6 @@ export default function FavoritesScreen() {
     }
   }
 
-  if (!isLoaded) {
-    return (
-      <View className="flex-1 justify-center items-center mt-40">
-        <ActivityIndicator size="large" />
-      </View>
-    );
-  }
-
-  if (!isSignedIn) {
-    return <AuthView mode="signInOrUp" />;
-  }
-
   useEffect(() => {
     if (!isSignedIn) return;
     (async () => {
@@ -57,6 +45,18 @@ export default function FavoritesScreen() {
       }
     })();
   }, [isSignedIn]);
+
+  if (!isLoaded) {
+    return (
+      <View className="flex-1 justify-center items-center mt-40">
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
+
+  if (!isSignedIn) {
+    return <AuthView mode="signInOrUp" />;
+  }
 
   return (
     <HomeList
