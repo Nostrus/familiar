@@ -1,26 +1,38 @@
 # Familiar — Home Swapping, Reimagined
 
-A home-swapping platform where members swap homes with trusted connections worldwide, skip hotel prices, and stay like locals.
+A home-swapping app demo using Nx monorepo wrapping a Next.js web and a React Native mobile app
 
 ## Tech Stack
 
 - **Nx** — monorepo tooling
 - **Next.js 16** (`@org/web`) — web app with App Router
-- **Playwright** (`@org/web-e2e`) — e2e tests
-- **Tailwind v4** — CSS-first styling
-- **shadcn/ui** — component library
+- **Expo 55 + React Native 0.83** (`@org/mobile`) — cross-platform mobile app
+- **Tailwind v4** (web) / **NativeWind v4** (mobile) — utility-class styling
+- **shadcn/ui** — web component library
+- **Drizzle ORM + Neon** — database layer (`@org/db`)
+- **Clerk** — authentication (web + mobile)
+- **Vercel** — hosting for the web app and Blob storage for home photos
 - **Prettier**, **ESLint** — formatting and linting
 - **Commitlint + Husky** — [Conventional Commits](https://www.conventionalcommits.org/)
+- **Playwright** (`@org/web-e2e`) — e2e tests
 
 ## Commands
 
 ```sh
-npm exec nx run @org/web:dev      # Start Next.js app
-npm exec nx run @org/web:build    # Build web app
-npm run test                        # Run all tests
-npm run lint         # Lint all projects
-npm run format       # Format with Prettier
-npm exec nx run @org/web-e2e:e2e   # Run e2e tests
+# Web
+pnpm nx run @org/web:dev           # Start Next.js dev server
+pnpm nx run @org/web:build         # Build web app
+pnpm nx run @org/web:lint          # Lint web app
+pnpm nx run @org/web-e2e:e2e       # Run Playwright e2e tests
+
+# Mobile
+pnpm nx run @org/mobile:start      # Start Expo dev server
+pnpm nx run @org/mobile:lint       # Lint mobile app
+
+# All projects
+pnpm run test                      # Run all Jest tests
+pnpm run lint                      # Lint all projects
+pnpm run format                    # Format with Prettier
 ```
 
 ## Database (Drizzle + Neon)
@@ -29,7 +41,7 @@ The web app uses Drizzle ORM with Neon PostgreSQL.
 
 Location:
 
-- `packages/db/src/schema.ts` - table definitions (`cities`, `clerk_users`)
+- `packages/db/src/schema.ts` - table definitions
 - `packages/db/src/queries` - DB queries
 - `packages/db/src/scripts/seed.ts` - seed data for DB
 - `packages/db/drizzle` - migration files
@@ -37,11 +49,26 @@ Location:
 Run DB commands from the repo root (delegates to `@org/db`):
 
 ```sh
-npm run db:generate  # Generate migration files from schema
-npm run db:migrate   # Apply migrations
-npm run db:seed      # Seed popular destination cities
-npm run db:studio    # Open Drizzle Studio
+pnpm run db:generate              # Generate migration files from schema
+pnpm run db:migrate               # Apply migrations
+pnpm run db:push                  # Push schema changes without migration files
+pnpm run db:pull                  # Pull remote schema
+pnpm run db:seed                  # Seed popular destination cities
+pnpm run db:seed:photos           # Seed home photo data
+pnpm run db:backfill:clerk-users  # Backfill Clerk user records
+pnpm run db:studio                # Open Drizzle Studio
 ```
+
+### Schema Tables
+
+| Table                | Description                                                           |
+| -------------------- | --------------------------------------------------------------------- |
+| `clerk_users`        | Synced from Clerk webhooks                                            |
+| `cities`             | Popular destination cities                                            |
+| `homes`              | Listed homes with amenities, photos, owner                            |
+| `home_availability`  | Available date ranges per home                                        |
+| `home_stay_requests` | Requests between guests and hosts (`pending \| approved \| rejected`) |
+| `home_favorites`     | Per-user favorited homes                                              |
 
 Required environment variables in `packages/db/.env.local`:
 
@@ -57,6 +84,27 @@ To avoid workspace dependency resolution issues for `@org/db` on Vercel:
 - Keep installs workspace-aware from the repository root (`pnpm install`).
 - Build using Nx from the root (for example: `pnpm nx run @org/web:build`).
 - Keep `apps/web/next.config.js` configured for monorepo package transpilation (`transpilePackages` with `@org/db`) and external workspace directories (`experimental.externalDir`).
+
+## Web App Environment Variables
+
+In `apps/web/.env.local`:
+
+```env
+# Clerk Authentication — https://clerk.com
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_...
+CLERK_SECRET_KEY=sk_test_...
+NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
+NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
+
+# Vercel Blob Storage (home photos)
+BLOB_READ_WRITE_TOKEN=vercel_blob_rw_...
+
+# Hero image URL (optional)
+NEXT_PUBLIC_HERO_IMAGE_URL=https://...
+
+# Database (also needed in packages/db/.env.local)
+DATABASE_URL=postgresql://...
+```
 
 ## Clerk Webhook Sync
 
@@ -86,61 +134,27 @@ The homepage (`apps/web/src/app/page.tsx`) renders three sections:
 
 ## Project Structure
 
-- `apps/web` — Next.js marketing site and dashboard
+- `apps/web` — Next.js web app (marketing + dashboard + API routes)
 - `apps/mobile` — Expo + React Native mobile app ([README](apps/mobile/README.md))
 - `apps/web/specs` — Jest unit/integration tests for app logic and components
 - `apps/web-e2e` — Playwright e2e tests
-- `apps/web-e2e/src` — Playwright spec files executed by the e2e target
-- `packages/theme` — Shared color system ([README](packages/theme/README.md))
-- `packages/db` — Drizzle ORM schema and queries
+- `packages/db` — Drizzle ORM schema, queries, and migrations ([README](packages/db/README.md))
+- `packages/types` — Shared TypeScript types used across web and mobile ([README](packages/types/README.md))
+- `packages/theme` — Shared color tokens for web and mobile ([README](packages/theme/README.md))
 
-## Versioning and releasing
+### API Routes (`apps/web/src/app/api`)
 
-To version and release the library use
-
-```
-npx nx release
-```
-
-Pass `--dry-run` to see what would happen without actually releasing the library.
-
-[Learn more about Nx release &raquo;](https://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Keep TypeScript project references up to date
-
-Nx automatically updates TypeScript [project references](https://www.typescriptlang.org/docs/handbook/project-references.html) in `tsconfig.json` files to ensure they remain accurate based on your project dependencies (`import` or `require` statements). This sync is automatically done when running tasks such as `build` or `typecheck`, which require updated references to function correctly.
-
-To manually trigger the process to sync the project graph dependencies information to the TypeScript project references, run the following command:
-
-```sh
-npx nx sync
-```
-
-You can enforce that the TypeScript project references are always in the correct state when running in CI by adding a step to your CI job configuration that runs the following command:
-
-```sh
-npx nx sync:check
-```
-
-[Learn more about nx sync](https://nx.dev/reference/nx-commands#sync)
-
-## Nx Cloud
-
-Nx Cloud ensures a [fast and scalable CI](https://nx.dev/ci/intro/why-nx-cloud?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) pipeline. It includes features such as:
-
-- [Remote caching](https://nx.dev/ci/features/remote-cache?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Task distribution across multiple machines](https://nx.dev/ci/features/distribute-task-execution?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Automated e2e test splitting](https://nx.dev/ci/features/split-e2e-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Task flakiness detection and rerunning](https://nx.dev/ci/features/flaky-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-### Set up CI (non-Github Actions CI)
-
-**Note:** This is only required if your CI provider is not GitHub Actions.
-
-Use the following command to configure a CI workflow for your workspace:
-
-```sh
-npx nx g ci-workflow
-```
-
-[Learn more about Nx on CI](https://nx.dev/ci/intro/ci-with-nx#ready-get-started-with-your-provider?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+| Route                    | Method             | Description                          |
+| ------------------------ | ------------------ | ------------------------------------ |
+| `/api/cities`            | GET                | List of popular destination cities   |
+| `/api/homes`             | GET                | Browse/filter homes                  |
+| `/api/homes/[id]`        | GET                | Home detail with availability        |
+| `/api/featured-homes`    | GET                | Featured home listings               |
+| `/api/my-favorites`      | GET                | Authenticated user's favorited homes |
+| `/api/toggle-favorite`   | POST               | Favorite or unfavorite a home        |
+| `/api/my-requests`       | GET / POST         | User's outgoing stay requests        |
+| `/api/my-requests/[id]`  | DELETE             | Cancel a stay request                |
+| `/api/my-homes`          | GET / POST / PATCH | Host's own homes                     |
+| `/api/my-homes/[id]`     | PATCH              | Update a specific owned home         |
+| `/api/my-homes/requests` | GET                | Incoming requests for a host's homes |
+| `/api/webhooks/clerk`    | POST               | Clerk user lifecycle webhook         |
