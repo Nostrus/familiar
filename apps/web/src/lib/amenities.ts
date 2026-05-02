@@ -1,40 +1,30 @@
-import { Car, PawPrint, UtensilsCrossed, WashingMachine, Wifi, Wind } from 'lucide-react';
+import { AMENITIES, getAmenityLabel } from '@org/types';
+import {
+  Car,
+  PawPrint,
+  UtensilsCrossed,
+  WashingMachine,
+  Wifi,
+  Wind,
+  type LucideIcon,
+} from 'lucide-react';
+export type { AmenityKey } from '@org/types';
 
-export const AMENITIES = {
-  wifi: {
-    key: 'wifi',
-    label: 'WiFi',
-    icon: Wifi,
-  },
-  ac: {
-    key: 'ac',
-    label: 'Air Conditioning',
-    icon: Wind,
-  },
-  parking: {
-    key: 'parking',
-    label: 'Parking',
-    icon: Car,
-  },
-  pet_friendly: {
-    key: 'pet_friendly',
-    label: 'Pet Friendly',
-    icon: PawPrint,
-  },
-  washing_machine: {
-    key: 'washing_machine',
-    label: 'Washing Machine',
-    icon: WashingMachine,
-  },
-  dishwasher: {
-    key: 'dishwasher',
-    label: 'Dishwasher',
-    icon: UtensilsCrossed,
-  },
-} as const;
+const WEB_ICONS: Record<string, LucideIcon> = {
+  Wifi,
+  Wind,
+  Car,
+  PawPrint,
+  WashingMachine,
+  UtensilsCrossed,
+};
 
-export type AmenityKey = keyof typeof AMENITIES;
+export { AMENITIES };
 
 export function getAmenity(key: string) {
-  return AMENITIES[key as AmenityKey] || { key, label: key, icon: null };
+  const entry = AMENITIES[key as keyof typeof AMENITIES];
+  if (entry) {
+    return { key: entry.key, label: entry.label, icon: WEB_ICONS[entry.webIcon] ?? null };
+  }
+  return { key, label: getAmenityLabel(key), icon: null };
 }
