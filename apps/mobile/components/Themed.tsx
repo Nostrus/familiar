@@ -31,16 +31,16 @@ export function useThemeColor(
 }
 
 export function Text(props: TextProps) {
-  const { style, lightColor, darkColor, ...otherProps } = props;
-  const color = useThemeColor({ light: lightColor, dark: darkColor }, 'text');
+  const { style, ...otherProps } = props;
+
   const fontFamily = 'Nunito-Regular'; // Set default font family for Text components
 
-  return <DefaultText style={[{ color, fontFamily }, style]} {...otherProps} />;
+  return <DefaultText style={[{ fontFamily }, style]} {...otherProps} />;
 }
 
 export function View(props: ViewProps) {
-  const { style, lightColor, darkColor, ...otherProps } = props;
-  const backgroundColor = useThemeColor({ light: lightColor, dark: darkColor }, 'background');
+  const { style, ...otherProps } = props;
+  const backgroundColor = useThemeColor({}, 'background');
 
   return <DefaultView style={[{ backgroundColor }, style]} {...otherProps} />;
 }
