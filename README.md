@@ -79,6 +79,8 @@ CLERK_SECRET_KEY=your_clerk_secret_key
 
 ### Vercel Monorepo Notes
 
+- Run `vercel link` to link the repo to Vercel.
+
 To avoid workspace dependency resolution issues for `@org/db` on Vercel:
 
 - Keep installs workspace-aware from the repository root (`pnpm install`).
@@ -87,7 +89,9 @@ To avoid workspace dependency resolution issues for `@org/db` on Vercel:
 
 ## Web App Environment Variables
 
-In `apps/web/.env.local`:
+- Run `vercel link` to link the repo to Vercel.
+- Run `vercel env pull .env.local` to update local env variables based on values stroed in Vercel
+  In `apps/web/.env.local`:
 
 ```env
 # Clerk Authentication — https://clerk.com
@@ -101,9 +105,6 @@ BLOB_READ_WRITE_TOKEN=vercel_blob_rw_...
 
 # Hero image URL (optional)
 NEXT_PUBLIC_HERO_IMAGE_URL=https://...
-
-# Database (also needed in packages/db/.env.local)
-DATABASE_URL=postgresql://...
 ```
 
 ## Clerk Webhook Sync
