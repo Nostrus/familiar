@@ -56,6 +56,12 @@ test-output
 packages/db/.env
 packages/db/.env.local
 
+# Local environment files (can contain secrets)
+**/.env
+**/.env.*
+!**/.env.example
+!**/.env.*.example
+
 # Expo
 node_modules/
 .expo/
@@ -70,3 +76,5 @@ npm-debug.*
 *.orig.*
 web-build/
 cache/
+.vercel
+.env*.local
