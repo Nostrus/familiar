@@ -183,3 +183,10 @@ The homepage (`apps/web/src/app/page.tsx`) renders three sections:
 ### Popular Destinations
 
 - The section streams in using React Suspense — `PopularDestinationsSkeleton` shows while data loads
+
+## Potential next steps
+
+- Storybook for shared components
+- Admin role with dashboards
+- Proper 'Sign in with Google' flow
+- More e2e tests with Maestro
