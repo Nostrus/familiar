@@ -22,7 +22,7 @@ jobs:
       # Cache node_modules
       - uses: pnpm/action-setup@v4
         with:
-          version: 9.12.0
+          version: 10.33.2
 
       - uses: actions/setup-node@v5
         with:
