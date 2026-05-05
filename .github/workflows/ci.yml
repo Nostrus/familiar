@@ -13,6 +13,7 @@ permissions:
 jobs:
   main:
     runs-on: ubuntu-latest
+    environment: Preview
     env:
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
     steps:
@@ -32,6 +33,9 @@ jobs:
           cache: 'pnpm'
 
       - run: pnpm install --frozen-lockfile
+
+      - name: Verify CI secrets
+        run: test -n "$DATABASE_URL"
 
       - name: Install Playwright browsers
         run: pnpm exec playwright install --with-deps
