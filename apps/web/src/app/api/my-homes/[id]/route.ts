@@ -9,6 +9,7 @@ type UpdateHomeBody = {
   bedrooms?: number;
   bathrooms?: number;
   maxGuests?: number;
+  amenities?: string[];
 };
 
 export async function PATCH(request: NextRequest, context: { params: Promise<{ id: string }> }) {
@@ -32,6 +33,7 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ i
     const bedrooms = Number(body.bedrooms);
     const bathrooms = Number(body.bathrooms);
     const maxGuests = Number(body.maxGuests);
+    const amenities = Array.isArray(body.amenities) ? body.amenities.map(String) : undefined;
 
     if (!city || !country) {
       return NextResponse.json({ error: 'City and country are required' }, { status: 400 });
@@ -57,6 +59,7 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ i
       bedrooms,
       bathrooms,
       maxGuests,
+      amenities,
     });
 
     return NextResponse.json(updatedHome);

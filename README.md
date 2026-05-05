@@ -19,6 +19,10 @@ A home-swapping app demo using Nx monorepo wrapping a Next.js web and a React Na
 ## Commands
 
 ```sh
+# Quick start (from repo root)
+pnpm run web                       # Start Next.js dev server (needed for mobile API routes also)
+pnpm run mobile                    # Start Expo dev server (auto-syncs local IP to .env.local - needed for API access)
+
 # Web
 pnpm nx run @org/web:dev           # Start Next.js dev server
 pnpm nx run @org/web:build         # Build web app

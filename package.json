@@ -5,6 +5,8 @@
   "scripts": {
     "prepare": "command -v husky >/dev/null 2>&1 && husky || true",
     "build": "npm --workspace @org/web run build",
+    "web": "nx run web:dev",
+    "mobile": "nx run mobile:start",
     "db:generate": "pnpm --filter @org/db run db:generate",
     "db:migrate": "pnpm --filter @org/db run db:migrate",
     "db:push": "pnpm --filter @org/db run db:push",

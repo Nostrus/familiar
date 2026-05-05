@@ -38,6 +38,7 @@ export default function HostScreen() {
     bedrooms: '1',
     bathrooms: '1',
     maxGuests: '1',
+    amenities: [],
   });
   const [saving, setSaving] = useState(false);
 
@@ -50,6 +51,7 @@ export default function HostScreen() {
       bedrooms: String(home.bedrooms ?? 1),
       bathrooms: String(home.bathrooms ?? 1),
       maxGuests: String(home.maxGuests ?? 1),
+      amenities: home.amenities ?? [],
     });
   }
 
@@ -74,6 +76,7 @@ export default function HostScreen() {
           bedrooms: Number(draft.bedrooms),
           bathrooms: Number(draft.bathrooms),
           maxGuests: Number(draft.maxGuests),
+          amenities: draft.amenities,
         }),
       });
 
