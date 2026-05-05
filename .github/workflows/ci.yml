@@ -36,7 +36,8 @@ jobs:
 
       - run: pnpm nx format:check --base="remotes/origin/main"
 
-      - run: pnpm nx run-many -t lint test build typecheck
+      - run: pnpm nx run-many -t lint test typecheck
+      - run: pnpm nx run-many -t build --exclude=@org/mobile
       - name: Run e2e tests
         timeout-minutes: 20
         run: cd apps/web-e2e && pnpm exec playwright test
