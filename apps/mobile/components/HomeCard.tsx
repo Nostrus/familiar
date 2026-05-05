@@ -3,7 +3,7 @@ import Feather from '@expo/vector-icons/Feather';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import type { Home } from '@org/types';
 import { useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Image, Pressable, View } from 'react-native';
 import { Text } from '../components/Themed';
 import { API_URL } from '../lib/api';
@@ -33,29 +33,49 @@ export function HomeCard({
   const router = useRouter();
   const [favorited, setFavorited] = useState(isFavorited);
   const [togglingFavorite, setTogglingFavorite] = useState(false);
+  const togglingRef = useRef(false);
 
   useEffect(() => {
     setFavorited(isFavorited);
   }, [isFavorited]);
 
   async function handleToggleFavorite() {
-    if (!isSignedIn || togglingFavorite || !API_URL) return;
+    if (!isSignedIn || togglingRef.current || !API_URL) return;
+    togglingRef.current = true;
+
+    const previousFavorited = favorited;
+    const optimisticFavorited = !previousFavorited;
+
+    setFavorited(optimisticFavorited);
+    onFavoriteChanged?.(home.id, optimisticFavorited);
+
     try {
       setTogglingFavorite(true);
       const token = await getToken();
-      if (!token) return;
+      if (!token) {
+        throw new Error('Missing auth token');
+      }
+
       const res = await fetch(`${API_URL}/api/toggle-favorite`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({ homeId: home.id }),
       });
+
       if (!res.ok) throw new Error('Failed to toggle favorite');
+
       const data = (await res.json()) as { isFavorited: boolean };
-      setFavorited(data.isFavorited);
-      onFavoriteChanged?.(home.id, data.isFavorited);
+
+      if (data.isFavorited !== optimisticFavorited) {
+        setFavorited(data.isFavorited);
+        onFavoriteChanged?.(home.id, data.isFavorited);
+      }
     } catch (err) {
       console.error('Failed to toggle favorite:', err);
+      setFavorited(previousFavorited);
+      onFavoriteChanged?.(home.id, previousFavorited);
     } finally {
+      togglingRef.current = false;
       setTogglingFavorite(false);
     }
   }

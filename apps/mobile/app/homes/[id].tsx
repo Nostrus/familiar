@@ -47,6 +47,34 @@ export default function HomeDetailScreen() {
     })();
   }, [id]);
 
+  useEffect(() => {
+    if (!id || !isSignedIn || !API_URL) {
+      setFavorited(false);
+      return;
+    }
+
+    (async () => {
+      try {
+        const token = await getToken();
+        if (!token) return;
+
+        const res = await fetch(`${API_URL}/api/my-favorites`, {
+          headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+        });
+
+        if (!res.ok) {
+          return;
+        }
+
+        const favorites = (await res.json()) as Array<{ id: number }>;
+        const homeId = Number(id);
+        setFavorited(favorites.some((favoriteHome) => favoriteHome.id === homeId));
+      } catch {
+        // ignore
+      }
+    })();
+  }, [id, isSignedIn, getToken]);
+
   async function handleToggleFavorite() {
     if (!isSignedIn || togglingFavorite || !API_URL) return;
     try {

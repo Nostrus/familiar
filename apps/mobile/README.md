@@ -6,6 +6,12 @@
 - Clerk for auth
 - Shares types, theme tokens, and API conventions with the web app
 
+## Demo
+
+|               Discover                |                Favorites                |             Host              |
+| :-----------------------------------: | :-------------------------------------: | :---------------------------: |
+| ![Discover](assets/demo/discover.gif) | ![Favorites](assets/demo/favorites.gif) | ![Host](assets/demo/host.gif) |
+
 ## Development
 
 ```bash

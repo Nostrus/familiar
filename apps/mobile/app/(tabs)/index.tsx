@@ -1,7 +1,12 @@
+import { useAuth } from '@clerk/expo';
 import type { Home, HomesByCity } from '@org/types';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, ScrollView, View } from 'react-native';
-import { DiscoverFilters, type DiscoverFiltersValue } from '../../components/DiscoverFilters';
+import {
+  DiscoverFilters,
+  type DiscoverFiltersHandle,
+  type DiscoverFiltersValue,
+} from '../../components/DiscoverFilters';
 import { HomeList } from '../../components/HomeList';
 import { Text } from '../../components/Themed';
 import { API_URL } from '../../lib/api';
@@ -43,6 +48,9 @@ function buildHomesUrl(filters: DiscoverFiltersValue) {
 }
 
 export default function DiscoverScreen() {
+  const { isSignedIn, getToken } = useAuth();
+  const getTokenRef = useRef(getToken);
+  const filtersRef = useRef<DiscoverFiltersHandle>(null);
   const [homesByCity, setHomesByCity] = useState<HomesByCity<Home>>({});
   const [featured, setFeatured] = useState<Home[]>([]);
   const [allCities, setAllCities] = useState<string[]>([]);
@@ -50,6 +58,40 @@ export default function DiscoverScreen() {
   const [appliedFilters, setAppliedFilters] = useState<DiscoverFiltersValue>(EMPTY_FILTERS);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [favoriteHomeIds, setFavoriteHomeIds] = useState<number[]>([]);
+
+  useEffect(() => {
+    getTokenRef.current = getToken;
+  }, [getToken]);
+
+  const loadFavoriteIds = useCallback(async () => {
+    if (!isSignedIn) {
+      setFavoriteHomeIds([]);
+      return;
+    }
+    try {
+      const token = await getTokenRef.current();
+      if (!token) return;
+      const res = await fetch(`${API_URL}/api/my-favorites`, {
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+      });
+      if (!res.ok) return;
+      const data = (await res.json()) as Array<{ id: number }>;
+      setFavoriteHomeIds(data.map((h) => h.id));
+    } catch {
+      // silently ignore — favorites overlay is non-critical
+    }
+  }, [isSignedIn]);
+
+  useEffect(() => {
+    void loadFavoriteIds();
+  }, [loadFavoriteIds]);
+
+  function handleFavoriteChanged(homeId: number, isFavorited: boolean) {
+    setFavoriteHomeIds((prev) =>
+      isFavorited ? [...prev, homeId] : prev.filter((id) => id !== homeId),
+    );
+  }
 
   useEffect(() => {
     (async () => {
@@ -115,8 +157,14 @@ export default function DiscoverScreen() {
   }
 
   return (
-    <ScrollView className="flex-1" contentContainerStyle={{ padding: 20, overflow: 'visible' }}>
+    <ScrollView
+      className="flex-1"
+      contentContainerStyle={{ padding: 20, overflow: 'visible' }}
+      onTouchStart={() => filtersRef.current?.closePopovers()}
+      onScrollBeginDrag={() => filtersRef.current?.closePopovers()}
+    >
       <DiscoverFilters
+        ref={filtersRef}
         allCities={allCities}
         value={draftFilters}
         hasAppliedFilters={hasAppliedFilters}
@@ -139,7 +187,11 @@ export default function DiscoverScreen() {
             <>
               <Text className="font-bold text-xl mb-3">Featured Homes</Text>
               <View className="mb-8">
-                <HomeList homes={featured} />
+                <HomeList
+                  homes={featured}
+                  favoriteHomeIds={favoriteHomeIds}
+                  onFavoriteChanged={handleFavoriteChanged}
+                />
               </View>
             </>
           )}
@@ -158,7 +210,11 @@ export default function DiscoverScreen() {
           {cityEntries.map(([cityName, homes]) => (
             <View key={cityName} className="mb-8">
               <Text className="font-bold text-xl mb-3">{cityName}</Text>
-              <HomeList homes={homes} />
+              <HomeList
+                homes={homes}
+                favoriteHomeIds={favoriteHomeIds}
+                onFavoriteChanged={handleFavoriteChanged}
+              />
             </View>
           ))}
         </>

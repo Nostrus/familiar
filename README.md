@@ -2,6 +2,12 @@
 
 A home-swapping app demo using Nx monorepo wrapping a Next.js web and a React Native mobile app
 
+## Mobile App Demo
+
+|             Discover and filter homes             |                  Handle Favorites                   |          Edit your home details           |
+| :-----------------------------------------------: | :-------------------------------------------------: | :---------------------------------------: |
+| ![Discover](apps/mobile/assets/demo/discover.gif) | ![Favorites](apps/mobile/assets/demo/favorites.gif) | ![Host](apps/mobile/assets/demo/host.gif) |
+
 ## Tech Stack
 
 - **Nx** — monorepo tooling
