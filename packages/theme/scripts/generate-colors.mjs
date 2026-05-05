@@ -4,10 +4,10 @@
  * Run this script whenever you update the OKLCH colors in theme.css.
  */
 
-import { readFileSync, writeFileSync } from 'fs';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
 import { formatHex, formatHex8, parse } from 'culori';
+import { readFileSync, writeFileSync } from 'fs';
+import { dirname, join } from 'path';
+import { fileURLToPath } from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const themeCssPath = join(__dirname, '../src/theme.css');
@@ -73,7 +73,7 @@ for (const [name, oklch] of Object.entries(darkColors)) {
 // Generate colors.ts
 const colorsTs = `/**
  * Color constants for React Native.
- * 
+ *
  * AUTO-GENERATED from theme.css OKLCH values.
  * DO NOT EDIT MANUALLY - run 'pnpm build' to regenerate.
  */
@@ -128,7 +128,7 @@ export type ColorName = keyof typeof colors.light;
 // Generate tailwind.cjs
 const tailwindCjs = `/**
  * Tailwind color tokens for NativeWind.
- * 
+ *
  * AUTO-GENERATED from theme.css OKLCH values.
  * DO NOT EDIT MANUALLY - run 'pnpm build' to regenerate.
  */
