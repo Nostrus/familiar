@@ -1,6 +1,6 @@
 # Mobile App
 
-- Expo 55 + React Native 0.83 app
+- Expo 55 + React Native app
 - File-based routing via Expo Router
 - NativeWind for Tailwind styling
 - Clerk for auth
@@ -16,8 +16,7 @@
 
 ```bash
 pnpm run build:ios:simulator        # Build the app with EAS
-pnpm nx run @org/mobile:start       # Start Expo dev server
-press i to launch in the simulator
+pnpm nx run @org/mobile:start       # Start Expo dev server (press i to launch in the simulator)
 pnpm nx run @org/mobile:lint        # Lint
 ```
 

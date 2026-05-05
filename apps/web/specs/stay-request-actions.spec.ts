@@ -25,7 +25,6 @@ import { createStayRequest } from '../src/app/homes/[id]/actions';
 
 const mockAuth = auth as unknown as jest.Mock;
 const mockDbSelect = db.select as jest.Mock;
-const mockDbInsert = db.insert as jest.Mock;
 const mockDbCreateStayRequest = dbCreateStayRequest as jest.Mock;
 
 // Reusable drizzle chain that resolves to `result` at `.limit()`

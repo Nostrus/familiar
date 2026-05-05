@@ -10,7 +10,6 @@ export interface City {
   createdAt: Date;
   updatedAt: Date;
 }
-
 /**
  * City summary for API responses
  */
@@ -20,10 +19,10 @@ export interface CitySummary {
   homes: number;
   tagline: string;
 }
-
 /**
  * Homes grouped by city name
  */
 export interface HomesByCity<T = unknown> {
   [city: string]: T[];
 }
+//# sourceMappingURL=city.d.ts.map

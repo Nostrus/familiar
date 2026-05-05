@@ -36,7 +36,7 @@ export function getDb(): Database {
 }
 
 export const db: Database = new Proxy({} as Database, {
-  get(_target, property, _receiver) {
+  get(_target, property) {
     const client = getDb();
     const value = Reflect.get(client, property, client);
 

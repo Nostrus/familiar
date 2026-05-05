@@ -9,7 +9,7 @@ export default tseslint.config(
       '.github/skills/**',
       '.opencode/**',
       '.vscode/**',
-      'dist/**',
+      '**/dist/**',
       'node_modules/**',
     ],
   },

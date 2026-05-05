@@ -21,18 +21,10 @@ jest.mock('@org/db', () => ({
 }));
 
 import { auth } from '@clerk/nextjs/server';
-import {
-  db,
-  updateStayRequestStatus as dbUpdateStayRequestStatus,
-  toggleHomeFavorite,
-} from '@org/db';
+import { updateStayRequestStatus as dbUpdateStayRequestStatus, toggleHomeFavorite } from '@org/db';
 import { toggleFavorite, updateStayRequestStatus } from '../src/app/homes/[id]/actions';
 
 const mockAuth = auth as unknown as jest.Mock;
-const mockDbSelect = db.select as jest.Mock;
-const mockDbInsert = db.insert as jest.Mock;
-const mockDbDelete = db.delete as jest.Mock;
-const mockDbUpdate = db.update as jest.Mock;
 const mockToggleHomeFavorite = toggleHomeFavorite as jest.Mock;
 const mockDbUpdateStayRequestStatus = dbUpdateStayRequestStatus as jest.Mock;
 
@@ -40,24 +32,6 @@ function makeFormData(fields: Record<string, string>) {
   const fd = new FormData();
   for (const [k, v] of Object.entries(fields)) fd.append(k, v);
   return fd;
-}
-
-/** Builds a chain where `.limit()` resolves, all other calls return `this`. */
-function limitChain(result: unknown) {
-  const self: Record<string, () => unknown> = {};
-  ['select', 'from', 'where', 'limit', 'innerJoin'].forEach((m) => {
-    self[m] = () => (m === 'limit' ? Promise.resolve(result) : self);
-  });
-  return self;
-}
-
-/** Builds a chain where `.where()` resolves (used for delete/update with no limit). */
-function whereChain() {
-  const self: Record<string, () => unknown> = {};
-  ['delete', 'update', 'set', 'where'].forEach((m) => {
-    self[m] = () => (m === 'where' ? Promise.resolve(undefined) : self);
-  });
-  return self;
 }
 
 beforeEach(() => jest.clearAllMocks());

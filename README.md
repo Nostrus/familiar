@@ -1,12 +1,52 @@
 # Familiar — Home Swapping, Reimagined
 
-A home-swapping app demo using Nx monorepo wrapping a Next.js web and a React Native mobile app
+Browse homes in cities you want to visit, request a stay, and list your own place in return. Familiar is a full-stack home-swapping demo built as an Nx monorepo with a Next.js web app and an Expo mobile app sharing a common DB layer, type system, and design tokens.
+
+**[Live Web Demo →](https://familiar-web-seven.vercel.app/)**
+
+## Features
+
+- **Discover & filter** — Browse homes by city or by using filters
+- **Home detail pages** — Photo gallery, availability calendar, amenity list
+- **Stay requests** — Guests send requests; hosts approve or reject them
+- **Favorites** — Save and manage a personal shortlist
+- **Host dashboard** — Edit your own listing (description, amenities, photos)
+- **Authentication** — Clerk-powered sign-in on both web and mobile, with webhook-synced user records
+- **Photo uploads** — Home photos stored on Vercel Blob
+- **Shared design system** — OKLCH color tokens compiled to CSS variables (web) and hex (mobile) from a single source of truth
 
 ## Mobile App Demo
 
 |             Discover and filter homes             |                  Handle Favorites                   |          Edit your home details           |
 | :-----------------------------------------------: | :-------------------------------------------------: | :---------------------------------------: |
 | ![Discover](apps/mobile/assets/demo/discover.gif) | ![Favorites](apps/mobile/assets/demo/favorites.gif) | ![Host](apps/mobile/assets/demo/host.gif) |
+
+## Project Structure
+
+- `apps/web` — Next.js web app (marketing + dashboard + API routes)
+- `apps/mobile` — Expo + React Native mobile app ([README](apps/mobile/README.md))
+- `apps/web/specs` — Jest unit/integration tests for app logic and components
+- `apps/web-e2e` — Playwright e2e tests
+- `packages/db` — Drizzle ORM schema, queries, and migrations ([README](packages/db/README.md))
+- `packages/types` — Shared TypeScript types used across web and mobile ([README](packages/types/README.md))
+- `packages/theme` — Shared color tokens for web and mobile ([README](packages/theme/README.md))
+
+### API Routes (`apps/web/src/app/api`)
+
+| Route                    | Method             | Description                          |
+| ------------------------ | ------------------ | ------------------------------------ |
+| `/api/cities`            | GET                | List of popular destination cities   |
+| `/api/homes`             | GET                | Browse/filter homes                  |
+| `/api/homes/[id]`        | GET                | Home detail with availability        |
+| `/api/featured-homes`    | GET                | Featured home listings               |
+| `/api/my-favorites`      | GET                | Authenticated user's favorited homes |
+| `/api/toggle-favorite`   | POST               | Favorite or unfavorite a home        |
+| `/api/my-requests`       | GET / POST         | User's outgoing stay requests        |
+| `/api/my-requests/[id]`  | DELETE             | Cancel a stay request                |
+| `/api/my-homes`          | GET / POST / PATCH | Host's own homes                     |
+| `/api/my-homes/[id]`     | PATCH              | Update a specific owned home         |
+| `/api/my-homes/requests` | GET                | Incoming requests for a host's homes |
+| `/api/webhooks/clerk`    | POST               | Clerk user lifecycle webhook         |
 
 ## Tech Stack
 
@@ -26,6 +66,7 @@ A home-swapping app demo using Nx monorepo wrapping a Next.js web and a React Na
 
 ```sh
 # Quick start (from repo root)
+pnpm install                       # Install dependencies
 pnpm run web                       # Start Next.js dev server (needed for mobile API routes also)
 pnpm run mobile                    # Start Expo dev server (auto-syncs local IP to .env.local - needed for API access)
 
@@ -142,30 +183,3 @@ The homepage (`apps/web/src/app/page.tsx`) renders three sections:
 ### Popular Destinations
 
 - The section streams in using React Suspense — `PopularDestinationsSkeleton` shows while data loads
-
-## Project Structure
-
-- `apps/web` — Next.js web app (marketing + dashboard + API routes)
-- `apps/mobile` — Expo + React Native mobile app ([README](apps/mobile/README.md))
-- `apps/web/specs` — Jest unit/integration tests for app logic and components
-- `apps/web-e2e` — Playwright e2e tests
-- `packages/db` — Drizzle ORM schema, queries, and migrations ([README](packages/db/README.md))
-- `packages/types` — Shared TypeScript types used across web and mobile ([README](packages/types/README.md))
-- `packages/theme` — Shared color tokens for web and mobile ([README](packages/theme/README.md))
-
-### API Routes (`apps/web/src/app/api`)
-
-| Route                    | Method             | Description                          |
-| ------------------------ | ------------------ | ------------------------------------ |
-| `/api/cities`            | GET                | List of popular destination cities   |
-| `/api/homes`             | GET                | Browse/filter homes                  |
-| `/api/homes/[id]`        | GET                | Home detail with availability        |
-| `/api/featured-homes`    | GET                | Featured home listings               |
-| `/api/my-favorites`      | GET                | Authenticated user's favorited homes |
-| `/api/toggle-favorite`   | POST               | Favorite or unfavorite a home        |
-| `/api/my-requests`       | GET / POST         | User's outgoing stay requests        |
-| `/api/my-requests/[id]`  | DELETE             | Cancel a stay request                |
-| `/api/my-homes`          | GET / POST / PATCH | Host's own homes                     |
-| `/api/my-homes/[id]`     | PATCH              | Update a specific owned home         |
-| `/api/my-homes/requests` | GET                | Incoming requests for a host's homes |
-| `/api/webhooks/clerk`    | POST               | Clerk user lifecycle webhook         |

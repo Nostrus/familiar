@@ -16,7 +16,7 @@
       "path": "./packages/types"
     },
     {
-      "path": "./apps/mobile"
+      "path": "./packages/theme"
     }
   ]
 }
