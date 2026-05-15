@@ -9,7 +9,7 @@ jest.mock('next/navigation', () => ({
   useSearchParams: () => mockSearchParams,
 }));
 
-import { DiscoverFilter } from '../src/components/discover-filter';
+import { DiscoverFilter } from '../src/app/discover/discover-filter';
 
 const allCities = ['Paris', 'London', 'Tokyo', 'New York'];
 

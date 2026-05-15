@@ -29,16 +29,16 @@ export function DiscoverFilter({ allCities }: Props) {
     [citiesParam],
   );
 
-  const [draftCities, setDraftCities] = useState<string[]>(selectedCities);
-  const [draftDateFrom, setDraftDateFrom] = useState(dateFromParam);
-  const [draftDateTo, setDraftDateTo] = useState(dateToParam);
-  const [draftGuests, setDraftGuests] = useState(guestsParam);
+  const [filterCities, setFilterCities] = useState<string[]>(selectedCities);
+  const [filterDateFrom, setFilterDateFrom] = useState(dateFromParam);
+  const [filterDateTo, setFilterDateTo] = useState(dateToParam);
+  const [filterGuests, setFilterGuests] = useState(guestsParam);
 
   useEffect(() => {
-    setDraftCities(selectedCities);
-    setDraftDateFrom(dateFromParam);
-    setDraftDateTo(dateToParam);
-    setDraftGuests(guestsParam);
+    setFilterCities(selectedCities);
+    setFilterDateFrom(dateFromParam);
+    setFilterDateTo(dateToParam);
+    setFilterGuests(guestsParam);
   }, [selectedCities, dateFromParam, dateToParam, guestsParam]);
 
   useEffect(() => {
@@ -63,72 +63,72 @@ export function DiscoverFilter({ allCities }: Props) {
     };
   }, [cityOpen]);
 
-  const draftDateRange = useMemo<DateRange | undefined>(() => {
-    if (!draftDateFrom && !draftDateTo) {
+  const filterDateRange = useMemo<DateRange | undefined>(() => {
+    if (!filterDateFrom && !filterDateTo) {
       return undefined;
     }
 
     return {
-      from: draftDateFrom ? parseISO(draftDateFrom) : undefined,
-      to: draftDateTo ? parseISO(draftDateTo) : undefined,
+      from: filterDateFrom ? parseISO(filterDateFrom) : undefined,
+      to: filterDateTo ? parseISO(filterDateTo) : undefined,
     };
-  }, [draftDateFrom, draftDateTo]);
+  }, [filterDateFrom, filterDateTo]);
 
   const dateRangeLabel =
-    draftDateRange?.from && draftDateRange?.to
-      ? `${format(draftDateRange.from, 'PPP')} - ${format(draftDateRange.to, 'PPP')}`
-      : draftDateRange?.from
-        ? format(draftDateRange.from, 'PPP')
+    filterDateRange?.from && filterDateRange?.to
+      ? `${format(filterDateRange.from, 'PPP')} - ${format(filterDateRange.to, 'PPP')}`
+      : filterDateRange?.from
+        ? format(filterDateRange.from, 'PPP')
         : 'Pick a date range';
 
   const applyFilters = useCallback(() => {
     const params = new URLSearchParams(searchParams.toString());
 
-    if (draftCities.length > 0) {
-      params.set('cities', draftCities.join(','));
+    if (filterCities.length > 0) {
+      params.set('cities', filterCities.join(','));
     } else {
       params.delete('cities');
     }
 
-    if (draftDateFrom) {
-      params.set('from', draftDateFrom);
+    if (filterDateFrom) {
+      params.set('from', filterDateFrom);
     } else {
       params.delete('from');
     }
 
-    if (draftDateTo) {
-      params.set('to', draftDateTo);
+    if (filterDateTo) {
+      params.set('to', filterDateTo);
     } else {
       params.delete('to');
     }
 
-    if (draftGuests) {
-      params.set('guests', draftGuests);
+    if (filterGuests) {
+      params.set('guests', filterGuests);
     } else {
       params.delete('guests');
     }
 
     const query = params.toString();
     router.push(query ? `/discover?${query}` : '/discover');
-  }, [router, searchParams, draftCities, draftDateFrom, draftDateTo, draftGuests]);
+  }, [router, searchParams, filterCities, filterDateFrom, filterDateTo, filterGuests]);
 
   const toggleCity = (city: string) => {
-    const next = draftCities.includes(city)
-      ? draftCities.filter((c) => c !== city)
-      : [...draftCities, city];
-    setDraftCities(next);
+    const next = filterCities.includes(city)
+      ? filterCities.filter((c) => c !== city)
+      : [...filterCities, city];
+    setFilterCities(next);
   };
 
   const clearAll = () => {
-    setDraftCities([]);
-    setDraftDateFrom('');
-    setDraftDateTo('');
-    setDraftGuests('');
+    setFilterCities([]);
+    setFilterDateFrom('');
+    setFilterDateTo('');
+    setFilterGuests('');
     setCityOpen(false);
     router.push('/discover');
   };
 
-  const hasFilters = draftCities.length > 0 || draftDateFrom || draftDateTo || draftGuests;
+  const hasFilters = filterCities.length > 0 || filterDateFrom || filterDateTo || filterGuests;
 
   return (
     <div className="sticky top-0 z-10 border-b border-slate-200 bg-white/90 py-4 backdrop-blur">
@@ -149,10 +149,10 @@ export function DiscoverFilter({ allCities }: Props) {
             <PopoverContent align="start" className="w-auto p-0">
               <Calendar
                 mode="range"
-                selected={draftDateRange}
+                selected={filterDateRange}
                 onSelect={(range) => {
-                  setDraftDateFrom(range?.from ? format(range.from, 'yyyy-MM-dd') : '');
-                  setDraftDateTo(range?.to ? format(range.to, 'yyyy-MM-dd') : '');
+                  setFilterDateFrom(range?.from ? format(range.from, 'yyyy-MM-dd') : '');
+                  setFilterDateTo(range?.to ? format(range.to, 'yyyy-MM-dd') : '');
                 }}
                 numberOfMonths={2}
               />
@@ -169,11 +169,11 @@ export function DiscoverFilter({ allCities }: Props) {
             className="flex h-10 min-w-44 items-center justify-between gap-2 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-800 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
           >
             <span className="truncate">
-              {draftCities.length === 0
+              {filterCities.length === 0
                 ? 'All cities'
-                : draftCities.length === 1
-                  ? draftCities[0]
-                  : `${draftCities.length} cities`}
+                : filterCities.length === 1
+                  ? filterCities[0]
+                  : `${filterCities.length} cities`}
             </span>
             <ChevronDown
               className={`h-4 w-4 shrink-0 text-slate-400 transition-transform ${cityOpen ? 'rotate-180' : ''}`}
@@ -192,12 +192,12 @@ export function DiscoverFilter({ allCities }: Props) {
                   >
                     <span
                       className={`flex h-4 w-4 shrink-0 items-center justify-center rounded border ${
-                        draftCities.includes(city)
+                        filterCities.includes(city)
                           ? 'border-primary bg-primary text-white'
                           : 'border-slate-300 bg-white'
                       }`}
                     >
-                      {draftCities.includes(city) && (
+                      {filterCities.includes(city) && (
                         <Check className="h-2.5 w-2.5" strokeWidth={3} />
                       )}
                     </span>
@@ -220,8 +220,8 @@ export function DiscoverFilter({ allCities }: Props) {
             min={1}
             max={20}
             placeholder="Any"
-            value={draftGuests}
-            onChange={(e) => setDraftGuests(e.target.value)}
+            value={filterGuests}
+            onChange={(e) => setFilterGuests(e.target.value)}
             className="h-10 w-24 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-800 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
           />
         </div>

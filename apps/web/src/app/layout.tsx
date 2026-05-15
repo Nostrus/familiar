@@ -41,6 +41,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </Link>
 
             <div className="flex items-center gap-10">
+              <Link
+                href="/discover"
+                className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+              >
+                Discover
+              </Link>
               <Show when="signed-out">
                 <Link
                   href="/sign-in"
@@ -57,12 +63,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               </Show>
               <Show when="signed-in">
                 <section className="flex items-center gap-10">
-                  <Link
-                    href="/discover"
-                    className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-                  >
-                    Discover
-                  </Link>
                   <Link
                     href="/my-home"
                     className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"

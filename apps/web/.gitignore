@@ -8,3 +8,6 @@
 
 # temporary local sample assets
 public/assets/home-samples/
+
+# Next.js generated types (auto-updated, causes whitespace diffs)
+next-env.d.ts
