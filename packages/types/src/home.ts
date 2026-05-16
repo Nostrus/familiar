@@ -1,4 +1,4 @@
-import type { HomeStayRequest } from './stay-request';
+import type { PendingOwnerRequest, ViewerRequest } from './stay-request';
 
 /**
  * Base Home entity from the database
@@ -35,8 +35,8 @@ export interface HomeAvailability {
  * Home with extended details including availability and requests
  */
 export interface HomeWithDetails extends Home {
-  availability?: HomeAvailability[];
-  viewerRequest?: HomeStayRequest | null;
-  requestsForOwner?: HomeStayRequest[];
-  isFavorite?: boolean;
+  availability: HomeAvailability[];
+  viewerRequest: ViewerRequest | null;
+  requestsForOwner: PendingOwnerRequest[];
+  isFavorited: boolean;
 }

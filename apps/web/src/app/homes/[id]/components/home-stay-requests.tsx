@@ -1,26 +1,8 @@
 import { Button } from '@/components/ui/button';
 import { Show } from '@clerk/nextjs';
+import type { PendingOwnerRequest, ViewerRequest } from '@org/types';
 import Link from 'next/link';
 import { createStayRequest, updateStayRequestStatus } from '../actions';
-
-type ViewerRequest = {
-  id: number;
-  status: 'pending' | 'approved' | 'rejected';
-  requestedStartDate: string;
-  requestedEndDate: string;
-  createdAt: Date;
-};
-
-type PendingOwnerRequest = {
-  id: number;
-  requesterId: string;
-  requesterFirstName: string | null;
-  requesterLastName: string | null;
-  status: 'pending' | 'approved' | 'rejected';
-  requestedStartDate: string;
-  requestedEndDate: string;
-  createdAt: Date;
-};
 
 type HomeStayRequestsProps = {
   homeId: number;

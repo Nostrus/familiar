@@ -26,6 +26,7 @@
   "dependencies": {
     "@clerk/backend": "^3.2.13",
     "@neondatabase/serverless": "^1.1.0",
+    "@org/types": "workspace:^",
     "@vercel/blob": "^2.3.3",
     "drizzle-kit": "^0.31.10",
     "drizzle-orm": "^0.45.2",

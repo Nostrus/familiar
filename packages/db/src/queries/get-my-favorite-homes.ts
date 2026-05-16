@@ -1,11 +1,12 @@
 import 'server-only';
 
-import { db } from '../client';
-import { homeFavorites, homes } from '../schema';
+import type { Home } from '@org/types';
 import { desc, eq } from 'drizzle-orm';
 import { cache } from 'react';
+import { db } from '../client';
+import { homeFavorites, homes } from '../schema';
 
-export const getMyFavoriteHomes = cache(async (userId: string) => {
+export const getMyFavoriteHomes = cache(async (userId: string): Promise<Home[]> => {
   return db
     .select({
       id: homes.id,

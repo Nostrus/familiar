@@ -1,30 +1,54 @@
 'use client';
 
 import { AMENITIES, AmenityKey } from '@/lib/amenities';
-import type { Home } from '@org/types';
+import type { CitySummary, Home } from '@org/types';
 import { X } from 'lucide-react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-import { useRef, useState, useTransition } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
+import { useEffect, useRef, useState, useTransition } from 'react';
 import { removeHomePhoto, updateHome, uploadHomePhoto } from '../edit-actions';
 
 type Props = {
   home: Pick<Home, 'id' | 'description' | 'city' | 'country' | 'amenities' | 'photos'>;
+  cities?: CitySummary[];
+  defaultOpen?: boolean;
+  onClose?: () => void;
 };
 
-export function HomeEditForm({ home }: Props) {
+export function HomeEditForm({ home, cities = [], defaultOpen = false, onClose }: Props) {
   const router = useRouter();
-  const [open, setOpen] = useState(false);
+  const pathname = usePathname();
+  const [open, setOpen] = useState(defaultOpen);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (defaultOpen) setOpen(true);
+  }, [defaultOpen]);
+
+  useEffect(() => {
+    if (open) {
+      containerRef.current?.scrollIntoView?.({ behavior: 'smooth', block: 'start' });
+    }
+  }, [open]);
+
+  function close() {
+    setOpen(false);
+    onClose?.();
+    router.replace(pathname);
+  }
   const [isPending, startTransition] = useTransition();
   const [uploadPending, setUploadPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>(home.amenities);
   const [photos, setPhotos] = useState<string[]>(home.photos);
+  const [selectedCity, setSelectedCity] = useState<CitySummary>(
+    cities.find((c) => c.city === home.city) ?? cities[0],
+  );
   const fileRef = useRef<HTMLInputElement>(null);
 
   function toggleAmenity(key: string) {
-    setSelectedAmenities((prev) =>
-      prev.includes(key) ? prev.filter((a) => a !== key) : [...prev, key],
+    setSelectedAmenities((items) =>
+      items.includes(key) ? items.filter((a) => a !== key) : [...items, key],
     );
   }
 
@@ -33,7 +57,7 @@ export function HomeEditForm({ home }: Props) {
     startTransition(async () => {
       try {
         await updateHome(formData);
-        setOpen(false);
+        close();
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to save.');
       }
@@ -83,27 +107,12 @@ export function HomeEditForm({ home }: Props) {
     }
   }
 
-  if (!open) {
-    return (
-      <button
-        onClick={() => setOpen(true)}
-        className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-50"
-      >
-        Edit home
-      </button>
-    );
-  }
+  if (!open) return null;
 
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+    <div ref={containerRef} className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
       <div className="mb-5 flex items-center justify-between">
         <h2 className="text-lg font-semibold text-slate-900">Edit home</h2>
-        <button
-          onClick={() => setOpen(false)}
-          className="text-sm text-slate-500 hover:text-slate-700"
-        >
-          Cancel
-        </button>
       </div>
 
       <form action={handleAction} className="space-y-5">
@@ -117,6 +126,7 @@ export function HomeEditForm({ home }: Props) {
           <label className="mb-1 block text-sm font-medium text-slate-700">Description</label>
           <textarea
             name="description"
+            required
             defaultValue={home.description}
             rows={3}
             className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
@@ -127,21 +137,26 @@ export function HomeEditForm({ home }: Props) {
         <div className="grid grid-cols-2 gap-3">
           <div>
             <label className="mb-1 block text-sm font-medium text-slate-700">City</label>
-            <input
+            <select
               name="city"
-              defaultValue={home.city}
-              type="text"
+              required
+              value={selectedCity.city}
+              onChange={(e) => setSelectedCity(cities.find((c) => c.city === e.target.value)!)}
               className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-            />
+            >
+              {cities.map((c) => (
+                <option key={c.city} value={c.city}>
+                  {c.city}
+                </option>
+              ))}
+            </select>
           </div>
           <div>
             <label className="mb-1 block text-sm font-medium text-slate-700">Country</label>
-            <input
-              name="country"
-              defaultValue={home.country}
-              type="text"
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-            />
+            <p className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-500 select-none">
+              {selectedCity.country}
+            </p>
+            <input type="hidden" name="country" value={selectedCity.country} />
           </div>
         </div>
 
@@ -180,13 +195,22 @@ export function HomeEditForm({ home }: Props) {
 
         {error && <p className="text-sm text-red-600">{error}</p>}
 
-        <button
-          type="submit"
-          disabled={isPending}
-          className="rounded-lg bg-slate-900 px-5 py-2 text-sm font-medium text-white transition hover:bg-slate-700 disabled:opacity-60"
-        >
-          {isPending ? 'Saving…' : 'Save changes'}
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={close}
+            className="rounded-lg border border-slate-300 bg-white px-5 py-2 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-50"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            disabled={isPending}
+            className="rounded-lg bg-slate-900 px-5 py-2 text-sm font-medium text-white transition hover:bg-slate-700 disabled:opacity-60"
+          >
+            {isPending ? 'Saving…' : 'Save changes'}
+          </button>
+        </div>
       </form>
 
       {/* Photos */}

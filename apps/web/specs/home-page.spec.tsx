@@ -9,6 +9,7 @@ jest.mock('@clerk/nextjs', () => ({
 }));
 
 jest.mock('@org/db', () => ({
+  getCities: jest.fn(async () => [{ city: 'Paris', country: 'France', homes: 10, tagline: '' }]),
   getHome: jest.fn(async () => ({
     id: 7,
     ownerId: 'owner_456',
@@ -56,7 +57,9 @@ import HomePage from '../src/app/homes/[id]/page';
 
 describe('HomePage favorites', () => {
   it('renders a saved favorites button for signed-in users', async () => {
-    render(await HomePage({ params: Promise.resolve({ id: '7' }) }));
+    render(
+      await HomePage({ params: Promise.resolve({ id: '7' }), searchParams: Promise.resolve({}) }),
+    );
 
     expect(screen.getByRole('button', { name: /saved/i })).toBeTruthy();
   });

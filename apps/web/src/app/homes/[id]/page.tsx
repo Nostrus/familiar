@@ -1,9 +1,10 @@
 import { Button } from '@/components/ui/button';
-import { getHome } from '@org/db';
 import { Show } from '@clerk/nextjs';
 import { auth } from '@clerk/nextjs/server';
-import { Bath, Bed, Heart, Users } from 'lucide-react';
+import { getCities, getHome } from '@org/db';
+import { Bath, Bed, Heart, Pencil, Users } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { toggleFavorite } from './actions';
 import { HomeAmenities } from './components/home-amenities';
@@ -11,10 +12,16 @@ import { HomeAvailability } from './components/home-availability';
 import { HomeEditForm } from './components/home-edit-form';
 import { HomeStayRequests } from './components/home-stay-requests';
 
-export default async function HomePage(props: { params: Promise<{ id: string }> }) {
+export default async function HomePage(props: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ edit?: string }>;
+}) {
   const { userId } = await auth();
   const params = await props.params;
+  const searchParams = await props.searchParams;
   const homeId = parseInt(params.id, 10);
+  const cities = await getCities();
+  const isEditing = searchParams.edit === '1';
 
   if (isNaN(homeId)) {
     notFound();
@@ -43,15 +50,30 @@ export default async function HomePage(props: { params: Promise<{ id: string }> 
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <h1 className="text-3xl font-bold text-slate-900 sm:text-4xl">{homeTitle}</h1>
             <Show when="signed-in">
-              <form action={toggleFavorite}>
-                <input type="hidden" name="homeId" value={home.id} />
-                <Button type="submit" variant="outline" className="gap-2">
-                  <Heart
-                    className={home.isFavorited ? 'fill-current text-rose-500' : 'text-slate-500'}
-                  />
-                  {home.isFavorited ? 'Saved' : 'Save'}
-                </Button>
-              </form>
+              <div className="flex items-center gap-2">
+                {isOwner && !isEditing && (
+                  <Link
+                    href="?edit=1"
+                    className="inline-flex items-center gap-2 rounded-lg px-5 py-2 text-sm font-medium transition bg-white hover:bg-gray-50 border border-slate-300 text-slate-700 "
+                  >
+                    <Pencil className="h-3.5 w-3.5" />
+                    Edit
+                  </Link>
+                )}
+                {!isOwner && (
+                  <form action={toggleFavorite}>
+                    <input type="hidden" name="homeId" value={home.id} />
+                    <Button type="submit" variant="outline" className="gap-2">
+                      <Heart
+                        className={
+                          home.isFavorited ? 'fill-current text-rose-500' : 'text-slate-500'
+                        }
+                      />
+                      {home.isFavorited ? 'Saved' : 'Save'}
+                    </Button>
+                  </form>
+                )}
+              </div>
             </Show>
           </div>
           <div className="mt-3 flex items-center gap-4 text-sm text-slate-700">
@@ -114,6 +136,8 @@ export default async function HomePage(props: { params: Promise<{ id: string }> 
               amenities: home.amenities,
               photos: home.photos,
             }}
+            cities={cities}
+            defaultOpen={isEditing}
           />
         )}
         <HomeStayRequests

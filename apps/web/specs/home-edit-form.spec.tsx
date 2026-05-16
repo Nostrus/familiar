@@ -10,7 +10,8 @@ jest.mock('../src/app/homes/[id]/edit-actions', () => ({
 }));
 
 jest.mock('next/navigation', () => ({
-  useRouter: () => ({ refresh: jest.fn() }),
+  useRouter: () => ({ refresh: jest.fn(), replace: jest.fn() }),
+  usePathname: () => '/homes/1',
 }));
 
 jest.mock('next/image', () => ({
@@ -35,13 +36,14 @@ const stubHome = {
   photos: [],
 };
 
+const stubCities = [{ city: 'Paris', country: 'France', homes: 10, tagline: '' }];
+
 beforeEach(() => {
   jest.clearAllMocks();
 });
 
 function openForm() {
-  render(<HomeEditForm home={stubHome} />);
-  fireEvent.click(screen.getByRole('button', { name: /Edit home/i }));
+  render(<HomeEditForm home={stubHome} cities={stubCities} defaultOpen />);
 }
 
 describe('HomeEditForm photo upload', () => {

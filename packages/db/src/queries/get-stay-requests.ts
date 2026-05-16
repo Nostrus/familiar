@@ -1,10 +1,14 @@
 import 'server-only';
 
+import type {
+  IncomingStayRequest,
+  PendingOwnerRequest,
+  StayRequestStatus,
+  StayRequestWithHome,
+} from '@org/types';
 import { and, desc, eq, type SQL } from 'drizzle-orm';
 import { db } from '../client';
 import { clerkUsers, homeStayRequests, homes } from '../schema';
-
-type StayRequestStatus = 'pending' | 'approved' | 'rejected';
 
 type StayRequestFilters = {
   requesterId?: string;
@@ -25,6 +29,7 @@ const stayRequestBaseSelect = {
   requestedStartDate: homeStayRequests.requestedStartDate,
   requestedEndDate: homeStayRequests.requestedEndDate,
   createdAt: homeStayRequests.createdAt,
+  updatedAt: homeStayRequests.updatedAt,
 } as const;
 
 export async function getStayRequests({
@@ -33,7 +38,7 @@ export async function getStayRequests({
   ownerId,
   status,
   limit,
-}: GetStayRequestsInput) {
+}: GetStayRequestsInput): Promise<PendingOwnerRequest[]> {
   const filters: SQL[] = [];
 
   if (requesterId) {
@@ -82,7 +87,7 @@ export async function getStayRequestsWithHome({
   ownerId,
   status,
   limit,
-}: GetStayRequestsInput) {
+}: GetStayRequestsInput): Promise<StayRequestWithHome[]> {
   const filters: SQL[] = [];
 
   if (requesterId) {
@@ -131,7 +136,7 @@ export async function getStayRequestsWithHomeAndRequester({
   ownerId,
   status,
   limit,
-}: GetStayRequestsInput) {
+}: GetStayRequestsInput): Promise<IncomingStayRequest[]> {
   const filters: SQL[] = [];
 
   if (requesterId) {

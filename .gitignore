@@ -53,6 +53,10 @@ Thumbs.db
 out
 test-output
 
+# Temporary command output files
+*_output*.txt
+*.log
+
 # DB package local env
 packages/db/.env
 packages/db/.env.local
