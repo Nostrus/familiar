@@ -1,17 +1,10 @@
 import { cancelMyStayRequest } from '@/app/homes/[id]/actions';
 import { Button } from '@/components/ui/button';
-import { getMyStayRequests } from '@org/db';
 import { auth } from '@clerk/nextjs/server';
+import { getMyStayRequests } from '@org/db';
+import { formatDate } from '@org/types';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
-
-function formatDate(dateStr: string) {
-  return new Date(`${dateStr}T00:00:00`).toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  });
-}
 
 function formatStatus(status: 'pending' | 'approved' | 'rejected') {
   if (status === 'approved') {

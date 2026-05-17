@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Show } from '@clerk/nextjs';
 import type { PendingOwnerRequest, ViewerRequest } from '@org/types';
+import { formatDate } from '@org/types';
 import Link from 'next/link';
 import { createStayRequest, updateStayRequestStatus } from '../actions';
 
@@ -17,14 +18,6 @@ function formatStatus(status: ViewerRequest['status']) {
   if (status === 'approved') return 'Approved';
   if (status === 'rejected') return 'Rejected';
   return 'Pending';
-}
-
-function formatDate(dateStr: string) {
-  return new Date(`${dateStr}T00:00:00`).toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  });
 }
 
 export function HomeStayRequests({

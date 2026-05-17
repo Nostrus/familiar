@@ -2,6 +2,7 @@ import { useAuth } from '@clerk/expo';
 import Feather from '@expo/vector-icons/Feather';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import type { Home, HomeAvailability } from '@org/types';
+import { formatDate } from '@org/types';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, Image, Pressable, ScrollView, View } from 'react-native';
@@ -10,14 +11,6 @@ import { getAmenity } from '../../lib/amenities';
 import { API_URL } from '../../lib/api';
 
 type HomeDetail = Home & { availability: HomeAvailability[] };
-
-function formatDate(dateStr: string) {
-  return new Date(`${dateStr}T00:00:00`).toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  });
-}
 
 export default function HomeDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();

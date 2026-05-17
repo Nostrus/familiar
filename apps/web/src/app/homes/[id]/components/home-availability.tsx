@@ -1,3 +1,4 @@
+import { formatDate } from '@org/types';
 import { Calendar } from 'lucide-react';
 
 type HomeAvailabilityRange = {
@@ -5,14 +6,6 @@ type HomeAvailabilityRange = {
   startDate: string;
   endDate: string;
 };
-
-function formatDate(dateStr: string) {
-  return new Date(dateStr + 'T00:00:00').toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  });
-}
 
 export function HomeAvailability({ availability }: { availability: HomeAvailabilityRange[] }) {
   return (

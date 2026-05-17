@@ -2,6 +2,7 @@ import { useAuth } from '@clerk/expo';
 import { AuthView } from '@clerk/expo/native';
 import Feather from '@expo/vector-icons/Feather';
 import type { Home, IncomingStayRequest } from '@org/types';
+import { formatDate } from '@org/types';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, FlatList, SectionList, View } from 'react-native';
 import { HomeEditModal, type HomeEditDraft } from '../../components/HomeEditModal';
@@ -14,14 +15,6 @@ const STATUS_CONFIG = {
   approved: { label: 'Approved', bg: 'bg-green-100', text: 'text-green-700' },
   rejected: { label: 'Rejected', bg: 'bg-red-100', text: 'text-red-600' },
 } as const;
-
-function formatDate(dateStr: string) {
-  return new Date(`${dateStr}T00:00:00`).toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  });
-}
 
 export default function HostScreen() {
   const { isSignedIn, getToken } = useAuth();
