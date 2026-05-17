@@ -83,6 +83,9 @@
   },
   "packageManager": "pnpm@10.33.2",
   "pnpm": {
+    "overrides": {
+      "@clerk/shared": "4.8.7"
+    },
     "patchedDependencies": {
       "react-native-css-interop": "patches/react-native-css-interop.patch"
     },
