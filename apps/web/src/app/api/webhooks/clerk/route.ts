@@ -1,7 +1,5 @@
-import { db } from '@org/db';
-import { clerkUsers } from '@org/db';
 import { verifyWebhook } from '@clerk/nextjs/webhooks';
-import { eq } from 'drizzle-orm';
+import { deleteClerkUser, upsertClerkUser } from '@org/db';
 
 export const runtime = 'nodejs';
 
@@ -24,24 +22,7 @@ export async function POST(request: Request) {
           return Response.json({ ok: true });
         }
 
-        await db
-          .insert(clerkUsers)
-          .values({
-            clerkUserId,
-            firstName,
-            lastName,
-            email,
-            updatedAt: new Date(),
-          })
-          .onConflictDoUpdate({
-            target: clerkUsers.clerkUserId,
-            set: {
-              firstName,
-              lastName,
-              email,
-              updatedAt: new Date(),
-            },
-          });
+        await upsertClerkUser({ clerkUserId, firstName, lastName, email });
 
         break;
       }
@@ -50,7 +31,7 @@ export async function POST(request: Request) {
         const clerkUserId = event.data.id;
 
         if (clerkUserId) {
-          await db.delete(clerkUsers).where(eq(clerkUsers.clerkUserId, clerkUserId));
+          await deleteClerkUser(clerkUserId);
         }
 
         break;

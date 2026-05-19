@@ -1,19 +1,18 @@
-import { db } from '@org/db';
-import { homes } from '@org/db';
 import { auth } from '@clerk/nextjs/server';
-import { eq } from 'drizzle-orm';
+import { getOwnedHomeId } from '@org/db';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
+import { HomeView } from '../homes/[id]/components/home-view';
 
-export default async function MyHomePage() {
+export default async function MyHomePage(props: { searchParams: Promise<{ edit?: string }> }) {
   const { userId } = await auth();
   if (!userId) {
     redirect('/sign-in');
   }
 
-  const ownedHomes = await db.select({ id: homes.id }).from(homes).where(eq(homes.ownerId, userId));
+  const ownedHomeId = await getOwnedHomeId(userId);
 
-  if (ownedHomes.length === 0) {
+  if (ownedHomeId === null) {
     return (
       <main className="mx-auto w-full max-w-3xl px-6 py-12 md:px-10">
         <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
@@ -30,5 +29,14 @@ export default async function MyHomePage() {
     );
   }
 
-  redirect(`/homes/${ownedHomes[0].id}`);
+  const searchParams = await props.searchParams;
+
+  return (
+    <HomeView
+      homeId={ownedHomeId}
+      userId={userId}
+      isEditing={searchParams.edit === '1'}
+      editHref="?edit=1"
+    />
+  );
 }

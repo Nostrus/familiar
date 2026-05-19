@@ -4,7 +4,7 @@ import { AMENITIES, AmenityKey } from '@/lib/amenities';
 import type { CitySummary, Home } from '@org/types';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useRef, useState, useTransition } from 'react';
-import { updateHome } from '../edit-actions';
+import { updateHome } from '../actions';
 import { HomePhotoEditor } from './home-photo-editor';
 
 type Props = {

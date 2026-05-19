@@ -1,16 +1,22 @@
-export { db, schema } from './client';
+export { schema } from './client';
 
+export * from './queries/add-photos-to-home';
 export * from './queries/cancel-stay-request';
 export * from './queries/create-stay-request';
+export * from './queries/delete-clerk-user';
 export * from './queries/get-cities';
 export * from './queries/get-featured-homes';
 export * from './queries/get-home';
 export * from './queries/get-homes-by-city';
 export * from './queries/get-incoming-requests';
 export * from './queries/get-my-favorite-homes';
+export * from './queries/get-my-homes';
 export * from './queries/get-my-stay-requests';
+export * from './queries/get-owned-home-id';
 export * from './queries/get-stay-requests';
+export * from './queries/remove-photo-from-home';
 export * from './queries/toggle-home-favorite';
 export * from './queries/update-owned-home';
 export * from './queries/update-stay-request-status';
+export * from './queries/upsert-clerk-user';
 export * from './schema';

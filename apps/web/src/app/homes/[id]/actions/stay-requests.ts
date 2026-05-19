@@ -6,28 +6,9 @@ import {
   cancelStayRequest,
   createStayRequest as dbCreateStayRequest,
   updateStayRequestStatus as dbUpdateStayRequestStatus,
-  toggleHomeFavorite,
 } from '@org/db';
 import { revalidatePath } from 'next/cache';
-
-function parseId(value: FormDataEntryValue | null): number {
-  const id = Number(value);
-  if (!Number.isInteger(id) || id <= 0) {
-    throw new Error('Invalid id');
-  }
-  return id;
-}
-
-function parseDate(value: FormDataEntryValue | null): string {
-  if (typeof value !== 'string' || !value) {
-    throw new Error('Invalid date');
-  }
-  const d = new Date(`${value}T00:00:00`);
-  if (Number.isNaN(d.getTime())) {
-    throw new Error('Invalid date');
-  }
-  return value;
-}
+import { parseDate, parseId } from './_utils';
 
 export async function createStayRequest(formData: FormData) {
   const { userId } = await auth();
@@ -89,20 +70,4 @@ export async function cancelMyStayRequest(formData: FormData) {
 
   revalidatePath('/my-requests');
   revalidatePath(`/homes/${homeId}`);
-}
-
-export async function toggleFavorite(formData: FormData) {
-  const { userId } = await auth();
-  if (!userId) {
-    throw new Error('You must be signed in to save favorites.');
-  }
-
-  await ensureClerkUser({ clerkUserId: userId });
-
-  const homeId = parseId(formData.get('homeId'));
-
-  await toggleHomeFavorite({ homeId, userId });
-
-  revalidatePath(`/homes/${homeId}`);
-  revalidatePath('/my-favorites');
 }

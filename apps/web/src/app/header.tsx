@@ -1,8 +1,22 @@
+'use client';
+
+import { cn } from '@/lib/utils';
 import { Show, UserButton } from '@clerk/nextjs';
 import Image from 'next/image';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 export function Header() {
+  const pathname = usePathname();
+
+  const navLink = (href: string) =>
+    cn(
+      'text-sm font-medium transition-colors',
+      pathname === href || pathname.startsWith(href + '/')
+        ? 'text-foreground'
+        : 'text-muted-foreground hover:text-foreground',
+    );
+
   return (
     <header className="mx-auto flex w-full max-w-6xl items-center justify-between gap-6 px-6 py-4 md:px-10">
       <Link
@@ -19,17 +33,11 @@ export function Header() {
       </Link>
 
       <div className="flex items-center gap-10">
-        <Link
-          href="/discover"
-          className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-        >
+        <Link href="/discover" className={navLink('/discover')}>
           Discover
         </Link>
         <Show when="signed-out">
-          <Link
-            href="/sign-in"
-            className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-          >
+          <Link href="/sign-in" className={navLink('/sign-in')}>
             Sign in
           </Link>
           <Link
@@ -41,28 +49,16 @@ export function Header() {
         </Show>
         <Show when="signed-in">
           <section className="flex items-center gap-10">
-            <Link
-              href="/my-home"
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-            >
+            <Link href="/my-home" className={navLink('/my-home')}>
               My Home
             </Link>
-            <Link
-              href="/my-requests"
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-            >
+            <Link href="/my-requests" className={navLink('/my-requests')}>
               My requests
             </Link>
-            <Link
-              href="/my-favorites"
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-            >
+            <Link href="/my-favorites" className={navLink('/my-favorites')}>
               My favorites
             </Link>
-            <Link
-              href="/my-profile"
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-            >
+            <Link href="/my-profile" className={navLink('/my-profile')}>
               My profile
             </Link>
             <UserButton />

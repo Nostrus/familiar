@@ -4,6 +4,7 @@
  */
 
 jest.mock('@clerk/nextjs/server', () => ({ auth: jest.fn() }));
+jest.mock('@vercel/blob', () => ({ put: jest.fn() }));
 jest.mock('../src/lib/ensure-clerk-user', () => ({ ensureClerkUser: jest.fn() }));
 jest.mock('next/cache', () => ({ revalidatePath: jest.fn() }));
 jest.mock('@org/db', () => ({

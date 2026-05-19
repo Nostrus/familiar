@@ -1,6 +1,5 @@
 import { getAuthUserId } from '@/lib/mobile-auth';
-import { db, homes } from '@org/db';
-import { eq } from 'drizzle-orm';
+import { getMyHomes } from '@org/db';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
@@ -10,7 +9,7 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const myHomes = await db.select().from(homes).where(eq(homes.ownerId, userId));
+    const myHomes = await getMyHomes(userId);
     return NextResponse.json(myHomes);
   } catch (error) {
     console.error('Failed to fetch homes:', error);

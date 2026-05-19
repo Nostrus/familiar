@@ -3,7 +3,7 @@
  * Verifies client-side 5 MB size guard before hitting the server action.
  */
 
-jest.mock('../src/app/homes/[id]/edit-actions', () => ({
+jest.mock('../src/app/homes/[id]/actions', () => ({
   uploadHomePhoto: jest.fn(),
   removeHomePhoto: jest.fn(),
   updateHome: jest.fn(),
@@ -22,8 +22,8 @@ jest.mock('next/image', () => ({
 }));
 
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import * as editActions from '../src/app/homes/[id]/actions';
 import { HomeEditForm } from '../src/app/homes/[id]/components/home-edit-form';
-import * as editActions from '../src/app/homes/[id]/edit-actions';
 
 const mockUploadHomePhoto = editActions.uploadHomePhoto as jest.Mock;
 

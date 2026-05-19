@@ -1,18 +1,16 @@
 'use server';
 
 import { auth } from '@clerk/nextjs/server';
-import { db, homes, updateOwnedHome } from '@org/db';
+import { addPhotosToHome, removePhotoFromHome, updateOwnedHome } from '@org/db';
 import { put } from '@vercel/blob';
-import { eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
+import { parseId } from './_utils';
 
 export async function updateHome(formData: FormData) {
   const { userId } = await auth();
   if (!userId) throw new Error('Not signed in.');
 
-  const homeId = Number(formData.get('homeId'));
-  if (!Number.isInteger(homeId) || homeId <= 0) throw new Error('Invalid home id.');
-
+  const homeId = parseId(formData.get('homeId'));
   const description = String(formData.get('description') ?? '').trim();
   const city = String(formData.get('city') ?? '').trim();
   const country = String(formData.get('country') ?? '').trim();
@@ -34,17 +32,7 @@ export async function uploadHomePhoto(formData: FormData) {
   const { userId } = await auth();
   if (!userId) throw new Error('Not signed in.');
 
-  const homeId = Number(formData.get('homeId'));
-  if (!Number.isInteger(homeId) || homeId <= 0) throw new Error('Invalid home id.');
-
-  const [home] = await db
-    .select({ id: homes.id, ownerId: homes.ownerId, photos: homes.photos })
-    .from(homes)
-    .where(eq(homes.id, homeId))
-    .limit(1);
-
-  if (!home) throw new Error('Home not found.');
-  if (home.ownerId !== userId) throw new Error('Not your home.');
+  const homeId = parseId(formData.get('homeId'));
 
   const files = formData
     .getAll('photos')
@@ -68,10 +56,7 @@ export async function uploadHomePhoto(formData: FormData) {
     uploadedUrls.push(blob.url);
   }
 
-  await db
-    .update(homes)
-    .set({ photos: [...home.photos, ...uploadedUrls], updatedAt: new Date() })
-    .where(eq(homes.id, homeId));
+  await addPhotosToHome({ homeId, ownerId: userId, urls: uploadedUrls });
 
   revalidatePath(`/homes/${homeId}`);
 
@@ -82,19 +67,7 @@ export async function removeHomePhoto(homeId: number, photoUrl: string) {
   const { userId } = await auth();
   if (!userId) throw new Error('Not signed in.');
 
-  const [home] = await db
-    .select({ id: homes.id, ownerId: homes.ownerId, photos: homes.photos })
-    .from(homes)
-    .where(eq(homes.id, homeId))
-    .limit(1);
-
-  if (!home) throw new Error('Home not found.');
-  if (home.ownerId !== userId) throw new Error('Not your home.');
-
-  await db
-    .update(homes)
-    .set({ photos: home.photos.filter((p: string) => p !== photoUrl), updatedAt: new Date() })
-    .where(eq(homes.id, homeId));
+  await removePhotoFromHome({ homeId, ownerId: userId, photoUrl });
 
   revalidatePath(`/homes/${homeId}`);
 }

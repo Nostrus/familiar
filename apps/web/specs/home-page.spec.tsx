@@ -53,13 +53,11 @@ jest.mock('next/image', () => ({
   default: (props: React.ImgHTMLAttributes<HTMLImageElement>) => <img {...props} alt={props.alt} />,
 }));
 
-import HomePage from '../src/app/homes/[id]/page';
+import { HomeView } from '../src/app/homes/[id]/components/home-view';
 
 describe('HomePage favorites', () => {
   it('renders a saved favorites button for signed-in users', async () => {
-    render(
-      await HomePage({ params: Promise.resolve({ id: '7' }), searchParams: Promise.resolve({}) }),
-    );
+    render(await HomeView({ homeId: 7, userId: 'user_123' }));
 
     expect(screen.getByRole('button', { name: /saved/i })).toBeTruthy();
   });
