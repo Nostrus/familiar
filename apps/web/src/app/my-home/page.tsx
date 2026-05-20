@@ -2,7 +2,8 @@ import { auth } from '@clerk/nextjs/server';
 import { getOwnedHomeId } from '@org/db';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
-import { HomeView } from '../homes/[id]/components/home-view';
+import { Suspense } from 'react';
+import { HomeView, HomeViewSkeleton } from '../homes/[id]/components/home-view';
 
 export default async function MyHomePage(props: { searchParams: Promise<{ edit?: string }> }) {
   const { userId } = await auth();
@@ -32,11 +33,13 @@ export default async function MyHomePage(props: { searchParams: Promise<{ edit?:
   const searchParams = await props.searchParams;
 
   return (
-    <HomeView
-      homeId={ownedHomeId}
-      userId={userId}
-      isEditing={searchParams.edit === '1'}
-      editHref="?edit=1"
-    />
+    <Suspense fallback={<HomeViewSkeleton />}>
+      <HomeView
+        homeId={ownedHomeId}
+        userId={userId}
+        isEditing={searchParams.edit === '1'}
+        editHref="?edit=1"
+      />
+    </Suspense>
   );
 }

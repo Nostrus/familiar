@@ -11,6 +11,36 @@ import { HomeAvailability } from './home-availability';
 import { HomeEditForm } from './home-edit-form';
 import { HomeStayRequests } from './home-stay-requests';
 
+export function HomeViewSkeleton() {
+  return (
+    <main className="min-h-screen bg-linear-to-br from-slate-50 via-white to-blue-50">
+      <div className="border-b border-slate-200 bg-white shadow-sm">
+        <div className="mx-auto w-full max-w-4xl px-6 py-8 md:px-10">
+          <div className="mb-4 h-4 w-28 animate-pulse rounded bg-slate-200" />
+          <div className="h-9 w-2/3 animate-pulse rounded bg-slate-200" />
+          <div className="mt-3 flex items-center gap-4">
+            <div className="h-4 w-16 animate-pulse rounded bg-slate-200" />
+            <div className="h-4 w-20 animate-pulse rounded bg-slate-200" />
+            <div className="h-4 w-16 animate-pulse rounded bg-slate-200" />
+          </div>
+        </div>
+      </div>
+      <div className="mx-auto w-full max-w-4xl space-y-10 px-6 py-12 md:px-10">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <div className="aspect-16/10 animate-pulse rounded-2xl bg-slate-200 sm:col-span-2" />
+          <div className="aspect-4/3 animate-pulse rounded-2xl bg-slate-200" />
+          <div className="aspect-4/3 animate-pulse rounded-2xl bg-slate-200" />
+        </div>
+        <div className="space-y-2">
+          <div className="h-4 w-32 animate-pulse rounded bg-slate-200" />
+          <div className="h-4 w-full animate-pulse rounded bg-slate-200" />
+          <div className="h-4 w-3/4 animate-pulse rounded bg-slate-200" />
+        </div>
+      </div>
+    </main>
+  );
+}
+
 export async function HomeView({
   homeId,
   userId,

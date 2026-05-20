@@ -1,6 +1,7 @@
 import { auth } from '@clerk/nextjs/server';
 import { notFound } from 'next/navigation';
-import { HomeView } from './components/home-view';
+import { Suspense } from 'react';
+import { HomeView, HomeViewSkeleton } from './components/home-view';
 
 export default async function HomePage(props: {
   params: Promise<{ id: string }>;
@@ -15,5 +16,9 @@ export default async function HomePage(props: {
     notFound();
   }
 
-  return <HomeView homeId={homeId} userId={userId ?? null} isEditing={searchParams.edit === '1'} />;
+  return (
+    <Suspense fallback={<HomeViewSkeleton />}>
+      <HomeView homeId={homeId} userId={userId ?? null} isEditing={searchParams.edit === '1'} />
+    </Suspense>
+  );
 }
