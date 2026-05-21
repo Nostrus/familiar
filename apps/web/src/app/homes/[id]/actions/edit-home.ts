@@ -4,35 +4,49 @@ import { auth } from '@clerk/nextjs/server';
 import { addPhotosToHome, removePhotoFromHome, updateOwnedHome } from '@org/db';
 import { put } from '@vercel/blob';
 import { revalidatePath } from 'next/cache';
-import { parseId } from './_utils';
+import * as z from 'zod';
+
+const UpdateHomeSchema = z.object({
+  homeId: z.coerce.number().int().positive(),
+  description: z.string().max(2000).optional(),
+  city: z.string().max(100).optional(),
+  country: z.string().max(100).optional(),
+  amenities: z.array(z.string().min(1)).optional(),
+});
 
 export async function updateHome(formData: FormData) {
   const { userId } = await auth();
   if (!userId) throw new Error('Not signed in.');
 
-  const homeId = parseId(formData.get('homeId'));
-  const description = String(formData.get('description') ?? '').trim();
-  const city = String(formData.get('city') ?? '').trim();
-  const country = String(formData.get('country') ?? '').trim();
-  const amenities = formData.getAll('amenities').map(String);
-
-  await updateOwnedHome({
-    homeId,
-    ownerId: userId,
-    description,
-    city,
-    country,
-    amenities,
+  const parsed = UpdateHomeSchema.parse({
+    homeId: formData.get('homeId'),
+    description: String(formData.get('description') ?? '').trim() || undefined,
+    city: String(formData.get('city') ?? '').trim() || undefined,
+    country: String(formData.get('country') ?? '').trim() || undefined,
+    amenities: formData.getAll('amenities').map(String).filter(Boolean),
   });
 
-  revalidatePath(`/homes/${homeId}`);
+  await updateOwnedHome({
+    homeId: parsed.homeId,
+    ownerId: userId,
+    description: parsed.description ?? '',
+    city: parsed.city ?? '',
+    country: parsed.country ?? '',
+    amenities: parsed.amenities ?? [],
+  });
+
+  revalidatePath(`/homes/${parsed.homeId}`);
 }
+
+const UploadHomePhotoSchema = z.object({
+  homeId: z.coerce.number().int().positive(),
+});
 
 export async function uploadHomePhoto(formData: FormData) {
   const { userId } = await auth();
   if (!userId) throw new Error('Not signed in.');
 
-  const homeId = parseId(formData.get('homeId'));
+  const { homeId } = UploadHomePhotoSchema.parse({ homeId: formData.get('homeId') });
 
   const files = formData
     .getAll('photos')

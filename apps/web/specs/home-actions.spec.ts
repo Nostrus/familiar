@@ -82,7 +82,7 @@ describe('updateStayRequestStatus', () => {
     mockAuth.mockResolvedValue({ userId: 'u1' });
     await expect(
       updateStayRequestStatus(makeFormData({ homeId: '1', requestId: '2', status: 'cancelled' })),
-    ).rejects.toThrow('Invalid status');
+    ).rejects.toThrow();
   });
 
   it('throws when the caller is not the home owner', async () => {

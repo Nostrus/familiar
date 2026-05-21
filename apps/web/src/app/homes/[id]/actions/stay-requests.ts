@@ -8,7 +8,27 @@ import {
   updateStayRequestStatus as dbUpdateStayRequestStatus,
 } from '@org/db';
 import { revalidatePath } from 'next/cache';
-import { parseDate, parseId } from './_utils';
+import * as z from 'zod';
+
+const CreateStayRequestSchema = z
+  .object({
+    homeId: z.coerce.number().int().positive(),
+    requestedStartDate: z.string().date(),
+    requestedEndDate: z.string().date(),
+  })
+  .refine((d) => d.requestedStartDate <= d.requestedEndDate, {
+    message: 'Requested start date must be before end date.',
+  });
+
+const UpdateStayRequestStatusSchema = z.object({
+  homeId: z.coerce.number().int().positive(),
+  requestId: z.coerce.number().int().positive(),
+  status: z.enum(['approved', 'rejected']),
+});
+
+const CancelStayRequestSchema = z.object({
+  requestId: z.coerce.number().int().positive(),
+});
 
 export async function createStayRequest(formData: FormData) {
   const { userId } = await auth();
@@ -17,24 +37,28 @@ export async function createStayRequest(formData: FormData) {
   }
   await ensureClerkUser({ clerkUserId: userId });
 
-  const homeId = parseId(formData.get('homeId'));
-  const requestedStartDate = parseDate(formData.get('requestedStartDate'));
-  const requestedEndDate = parseDate(formData.get('requestedEndDate'));
+  const parsed = CreateStayRequestSchema.parse({
+    homeId: formData.get('homeId'),
+    requestedStartDate: formData.get('requestedStartDate'),
+    requestedEndDate: formData.get('requestedEndDate'),
+  });
 
   const todayStr = new Date().toISOString().split('T')[0];
-  if (requestedStartDate < todayStr) {
+  if (parsed.requestedStartDate < todayStr) {
     throw new Error('Start date cannot be in the past.');
   }
-  if (requestedEndDate < todayStr) {
+  if (parsed.requestedEndDate < todayStr) {
     throw new Error('End date cannot be in the past.');
   }
-  if (requestedStartDate > requestedEndDate) {
-    throw new Error('Requested start date must be before end date.');
-  }
 
-  await dbCreateStayRequest({ homeId, userId, requestedStartDate, requestedEndDate });
+  await dbCreateStayRequest({
+    homeId: parsed.homeId,
+    userId,
+    requestedStartDate: parsed.requestedStartDate,
+    requestedEndDate: parsed.requestedEndDate,
+  });
 
-  revalidatePath(`/homes/${homeId}`);
+  revalidatePath(`/homes/${parsed.homeId}`);
   revalidatePath('/my-requests');
 }
 
@@ -45,17 +69,20 @@ export async function updateStayRequestStatus(formData: FormData) {
   }
   await ensureClerkUser({ clerkUserId: userId });
 
-  const homeId = parseId(formData.get('homeId'));
-  const requestId = parseId(formData.get('requestId'));
-  const nextStatus = formData.get('status');
+  const parsed = UpdateStayRequestStatusSchema.parse({
+    homeId: formData.get('homeId'),
+    requestId: formData.get('requestId'),
+    status: formData.get('status'),
+  });
 
-  if (nextStatus !== 'approved' && nextStatus !== 'rejected') {
-    throw new Error('Invalid status.');
-  }
+  await dbUpdateStayRequestStatus({
+    requestId: parsed.requestId,
+    homeId: parsed.homeId,
+    userId,
+    nextStatus: parsed.status,
+  });
 
-  await dbUpdateStayRequestStatus({ requestId, homeId, userId, nextStatus });
-
-  revalidatePath(`/homes/${homeId}`);
+  revalidatePath(`/homes/${parsed.homeId}`);
 }
 
 export async function cancelMyStayRequest(formData: FormData) {
@@ -64,7 +91,7 @@ export async function cancelMyStayRequest(formData: FormData) {
     throw new Error('You must be signed in.');
   }
 
-  const requestId = parseId(formData.get('requestId'));
+  const { requestId } = CancelStayRequestSchema.parse({ requestId: formData.get('requestId') });
 
   const { homeId } = await cancelStayRequest({ requestId, userId });
 

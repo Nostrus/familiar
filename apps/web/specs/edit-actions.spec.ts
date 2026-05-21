@@ -40,8 +40,8 @@ describe('updateHome', () => {
 
   it('throws when homeId is not a positive integer', async () => {
     mockAuth.mockResolvedValue({ userId: 'u1' });
-    await expect(updateHome(makeFormData({ homeId: 'abc' }))).rejects.toThrow('Invalid id');
-    await expect(updateHome(makeFormData({ homeId: '-5' }))).rejects.toThrow('Invalid id');
+    await expect(updateHome(makeFormData({ homeId: 'abc' }))).rejects.toThrow();
+    await expect(updateHome(makeFormData({ homeId: '-5' }))).rejects.toThrow();
   });
 
   it('throws when the home is owned by a different user', async () => {
