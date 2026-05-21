@@ -48,7 +48,7 @@ export function Header() {
           </Link>
         </Show>
         <Show when="signed-in">
-          <section className="flex items-center gap-10">
+          <nav className="flex items-center gap-10">
             <Link href="/my-home" className={navLink('/my-home')}>
               My Home
             </Link>
@@ -62,7 +62,7 @@ export function Header() {
               My profile
             </Link>
             <UserButton />
-          </section>
+          </nav>
         </Show>
       </div>
     </header>

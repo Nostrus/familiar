@@ -103,15 +103,15 @@ export async function HomeView({
           </div>
           <div className="mt-3 flex items-center gap-4 text-sm text-slate-700">
             <span className="flex items-center gap-1.5">
-              <Bed className="h-4 w-4 text-slate-400" />
+              <Bed aria-hidden="true" className="h-4 w-4 text-slate-400" />
               {home.bedrooms} {home.bedrooms === 1 ? 'bed' : 'beds'}
             </span>
             <span className="flex items-center gap-1.5">
-              <Bath className="h-4 w-4 text-slate-400" />
+              <Bath aria-hidden="true" className="h-4 w-4 text-slate-400" />
               {home.bathrooms} {home.bathrooms === 1 ? 'bathroom' : 'bathrooms'}
             </span>
             <span className="flex items-center gap-1.5">
-              <Users className="h-4 w-4 text-slate-400" />
+              <Users aria-hidden="true" className="h-4 w-4 text-slate-400" />
               {home.maxGuests} {home.maxGuests === 1 ? 'guest' : 'guests'}
             </span>
           </div>

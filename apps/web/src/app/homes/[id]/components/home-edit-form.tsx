@@ -75,8 +75,11 @@ export function HomeEditForm({ home, cities = [], defaultOpen = false, onClose }
 
         {/* Description */}
         <div>
-          <label className="mb-1 block text-sm font-medium text-slate-700">Description</label>
+          <label htmlFor="description" className="mb-1 block text-sm font-medium text-slate-700">
+            Description
+          </label>
           <textarea
+            id="description"
             name="description"
             required
             defaultValue={home.description}
@@ -88,8 +91,11 @@ export function HomeEditForm({ home, cities = [], defaultOpen = false, onClose }
         {/* Location */}
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="mb-1 block text-sm font-medium text-slate-700">City</label>
+            <label htmlFor="city" className="mb-1 block text-sm font-medium text-slate-700">
+              City
+            </label>
             <select
+              id="city"
               name="city"
               required
               value={selectedCity.city}
@@ -104,7 +110,7 @@ export function HomeEditForm({ home, cities = [], defaultOpen = false, onClose }
             </select>
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-slate-700">Country</label>
+            <p className="mb-1 block text-sm font-medium text-slate-700">Country</p>
             <p className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-500 select-none">
               {selectedCity.country}
             </p>
@@ -114,7 +120,7 @@ export function HomeEditForm({ home, cities = [], defaultOpen = false, onClose }
 
         {/* Amenities */}
         <div>
-          <label className="mb-2 block text-sm font-medium text-slate-700">Amenities</label>
+          <p className="mb-2 block text-sm font-medium text-slate-700">Amenities</p>
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
             {(Object.values(AMENITIES) as { key: AmenityKey; label: string }[]).map(
               ({ key, label }) => {
@@ -145,7 +151,11 @@ export function HomeEditForm({ home, cities = [], defaultOpen = false, onClose }
           </div>
         </div>
 
-        {error && <p className="text-sm text-red-600">{error}</p>}
+        {error && (
+          <p role="alert" className="text-sm text-red-600">
+            {error}
+          </p>
+        )}
 
         <div className="flex items-center gap-3">
           <button

@@ -135,7 +135,7 @@ export function DiscoverFilter({ allCities }: Props) {
       <div className="mx-auto flex max-w-6xl flex-wrap items-end gap-3 px-6 md:px-10">
         {/* Date range */}
         <div className="flex flex-col gap-1">
-          <label className="text-xs font-medium text-slate-500">Date range</label>
+          <p className="text-xs font-medium text-slate-500">Date range</p>
           <Popover>
             <PopoverTrigger asChild>
               <Button
@@ -162,7 +162,7 @@ export function DiscoverFilter({ allCities }: Props) {
 
         {/* City Multi-Select */}
         <div className="relative flex flex-col gap-1" ref={cityRef}>
-          <label className="text-xs font-medium text-slate-500">Cities</label>
+          <p className="text-xs font-medium text-slate-500">Cities</p>
           <button
             type="button"
             onClick={() => setCityOpen((o) => !o)}
